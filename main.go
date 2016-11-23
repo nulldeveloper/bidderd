@@ -11,7 +11,7 @@ import (
 	"os/signal"
 	"time"
 
-	"gopkg.in/bsm/openrtb.v1"
+	openrtb "gopkg.in/bsm/openrtb.v1"
 )
 
 const (
