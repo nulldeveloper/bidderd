@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"gopkg.in/bsm/openrtb.v1"
+	openrtb "gopkg.in/bsm/openrtb.v2"
 )
 
 const initialCapacity = 25 // No special reason why it's 25.
