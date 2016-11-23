@@ -143,10 +143,10 @@ func (agent *Agent) StopPacer() {
 // the list of creatives from the `Agent.Config.Creative` and places it
 // in the bid.
 func (agent *Agent) DoBid(
-	req *openrtb.Request, res *openrtb.Response, ids map[creativesKey]interface{}) (*openrtb.Response, bool) {
+	req *openrtb.BidRequest, res *openrtb.BidResponse, ids map[creativesKey]interface{}) (*openrtb.BidResponse, bool) {
 
 	for _, imp := range req.Imp {
-		key := creativesKey{ImpId: *imp.Id, ExtId: agent.Config.ExternalId}
+		key := creativesKey{ImpId: imp.ID, ExtId: agent.Config.ExternalId}
 		if ids[key] == nil {
 			continue
 		}
@@ -165,17 +165,18 @@ func (agent *Agent) DoBid(
 		// but we are not tracking anything yet.
 		bidId := strconv.Itoa(agent.bidId)
 
-		price := float32(agent.Price)
+		price := float64(agent.Price)
 
 		ext := map[string]interface{}{"priority": 1.0, "external-id": agent.Config.ExternalId}
-		bid := openrtb.Bid{Id: &bidId, Impid: imp.Id, Crid: &crid, Price: &price, Ext: ext}
+		jsonExt, _ := json.Marshal(ext)
+		bid := openrtb.Bid{ID: bidId, ImpID: imp.ID, CreativeID: crid, Price: price, Ext: jsonExt}
 		agent.bidId += 1
-		res.Seatbid[0].Bid = append(res.Seatbid[0].Bid, bid)
+		res.SeatBid[0].Bid = append(res.SeatBid[0].Bid, bid)
 	}
-	return res, len(res.Seatbid[0].Bid) > 0
+	return res, len(res.SeatBid[0].Bid) > 0
 }
 
-func externalIdsFromRequest(req *openrtb.Request) map[creativesKey]interface{} {
+func externalIdsFromRequest(req *openrtb.BidRequest) map[creativesKey]interface{} {
 	// This function makes a mappping with a range of type (Impression Id, External Id)
 	// to a slice of "creative indexes" (See the agent configuration "creative").
 	// We use this auxiliary function in `DoBid` to match the `BidRequest` to the
@@ -183,21 +184,21 @@ func externalIdsFromRequest(req *openrtb.Request) map[creativesKey]interface{} {
 	ids := make(map[creativesKey]interface{})
 
 	for _, imp := range req.Imp {
-		for _, extId := range imp.Ext["external-ids"].([]interface{}) {
-			key := creativesKey{ImpId: *imp.Id, ExtId: int(extId.(float64))}
-			creatives := (imp.Ext["creative-indexes"].(map[string]interface{}))[strconv.Itoa(int(extId.(float64)))]
+		for _, extID := range imp.Ext["external-ids"].([]interface{}) {
+			key := creativesKey{ImpId: imp.ID, ExtId: int(extID.(float64))}
+			creatives := (imp.Ext["creative-ids"].(map[string]interface{}))[strconv.Itoa(int(extID.(float64)))]
 			ids[key] = creatives.(interface{})
 		}
 	}
 	return ids
 }
 
-func emptyResponseWithOneSeat(req *openrtb.Request) *openrtb.Response {
+func emptyResponseWithOneSeat(req *openrtb.BidRequest) *openrtb.BidResponse {
 	// This function adds a Seat to the Response.
 	// Seat: A buyer entity that uses a Bidder to obtain impressions on its behalf.
-	seat := openrtb.Seatbid{Bid: make([]openrtb.Bid, 0)}
-	seatbid := []openrtb.Seatbid{seat}
-	res := &openrtb.Response{Id: req.Id, Seatbid: seatbid}
+	seat := openrtb.SeatBid{Bid: make([]openrtb.Bid, 0)}
+	seatbid := []openrtb.SeatBid{seat}
+	res := &openrtb.BidResponse{ID: req.ID, SeatBid: seatbid}
 	return res
 }
 

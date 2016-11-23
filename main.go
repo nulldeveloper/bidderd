@@ -11,7 +11,7 @@ import (
 	"os/signal"
 	"time"
 
-	openrtb "gopkg.in/bsm/openrtb.v1"
+	openrtb "gopkg.in/bsm/openrtb.v2"
 )
 
 const (
@@ -73,7 +73,9 @@ func main() {
 			tmpOk bool = true
 		)
 		enc := json.NewEncoder(w)
-		req, err := openrtb.ParseRequest(r.Body)
+		var req *openrtb.BidRequest
+		err = json.NewDecoder(r.Body).Decode(&req)
+		// req, err := openrtb.ParseRequest(r.Body)
 
 		if err != nil {
 			log.Println("ERROR", err.Error())
@@ -81,7 +83,7 @@ func main() {
 			return
 		}
 
-		log.Println("INFO Received bid request", *req.Id)
+		log.Println("INFO Received bid request", req.ID)
 
 		ids := externalIdsFromRequest(req)
 		res := emptyResponseWithOneSeat(req)
