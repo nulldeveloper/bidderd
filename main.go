@@ -36,12 +36,20 @@ func track(fn http.HandlerFunc, name string) http.HandlerFunc {
 	}
 }
 
+func printPortConfigs() {
+	log.Printf("Bidder port: %d", BidderPort)
+	log.Printf("Win port: %d", BidderWin)
+	log.Printf("Event port: %d", BidderEvent)
+}
+
 func main() {
 	var agentsConfigFile = flag.String("config", "", "Configuration file in JSON.")
 	flag.Parse()
 	if *agentsConfigFile == "" {
 		log.Fatal("You should provide a configuration file.")
 	}
+
+	printPortConfigs()
 
 	// http client to pace agents (note that it's pointer)
 	client := &http.Client{}
