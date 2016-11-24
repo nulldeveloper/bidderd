@@ -16,7 +16,7 @@
 							"fixedBidCpmInMicros" : 0,
 							"type" : "RELAY"
 					},
-					"bidProbability" : 0.5,
+					"bidProbability" : 0.9,
 					"creatives" : [
 							{
 									"format" : "728x90",
@@ -62,7 +62,7 @@
 							"fixedBidCpmInMicros" : 0,
 							"type" : "RELAY"
 					},
-					"bidProbability" : 0.1,
+					"bidProbability" : 0.9,
 					"creatives" : [
                         {
                                 "format" : "728x90",

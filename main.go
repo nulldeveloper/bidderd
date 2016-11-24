@@ -25,8 +25,8 @@ const (
 )
 
 func timeTrack(start time.Time, name string) {
-	elapsed := time.Since(start)
-	log.Printf("%s request took %s", name, elapsed)
+	// elapsed := time.Since(start)
+	// log.Printf("%s request took %s", name, elapsed)
 }
 
 func track(fn http.HandlerFunc, name string) http.HandlerFunc {
@@ -85,7 +85,7 @@ func main() {
 			return
 		}
 
-		log.Println("INFO Received bid request", req.ID)
+		// log.Println("INFO Received bid request", req.ID)
 
 		ids := externalIdsFromRequest(req)
 		res := emptyResponseWithOneSeat(req)
@@ -124,7 +124,6 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 		io.WriteString(w, "")
 		log.Println("Win!")
-		os.Exit(0)
 	})
 	go http.ListenAndServe(fmt.Sprintf(":%d", BidderWin), winmux)
 

@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -155,25 +156,9 @@ func (agent *Agent) DoBid(
 		// pick a random creative
 		n := rand.Intn(len(creativeList))
 
-		// JSON reads numbers as float64...
-		// cridx := int(creativeList[n].(float64))
-		// ...but this (`cridx` see below) is an index.
-		// fmt.Println("Bid request:")
-		// fmt.Println(req)
-		// creative := agent.Config.Creatives[cridx]
-		creative := agent.Config.Creatives[n]
-		crid := strconv.Itoa(creative.ID)
+		// Extract a usable creative ID from the JSON parse
+		crid := strconv.Itoa(int(creativeList[n].(float64)))
 
-		fmt.Printf("Impression ID: %s \n", imp.ID)
-		fmt.Println("ids:")
-		fmt.Println(ids)
-		fmt.Println("creative:")
-		fmt.Println(creative)
-		fmt.Printf("crid: %s \n", crid)
-
-		// the `bidID` should be something else,
-		// it is used for tracking the bid,
-		// but we are not tracking anything yet.
 		bidID := strconv.Itoa(agent.bidID)
 
 		price := float64(agent.Price)
@@ -247,4 +232,15 @@ func LoadAgentsFromFile(filepath string) ([]Agent, error) {
 		return agents, err
 	}
 	return agents, nil
+}
+
+//FindCreativeIndexFromID takes a creative ID and an AgentConfig,
+// returning a creative index usable by the RTBKit router
+func FindCreativeIndexFromID(crid int, agent AgentConfig) (string, error) {
+	for creativeIndex, creative := range agent.Creatives {
+		if creative.ID == crid {
+			return strconv.Itoa(creativeIndex), nil
+		}
+	}
+	return "", errors.New("Unable to find matching creative")
 }
