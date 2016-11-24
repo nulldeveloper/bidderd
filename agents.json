@@ -16,32 +16,32 @@
 							"fixedBidCpmInMicros" : 0,
 							"type" : "RELAY"
 					},
-					"bidProbability" : 0.1,
+					"bidProbability" : 0.5,
 					"creatives" : [
 							{
 									"format" : "728x90",
-									"id" : 2,
+									"id" : 5678,
 									"name" : "LeaderBoard"
 							},
 							{
 									"format" : "160x600",
-									"id" : 0,
+									"id" : 9876,
 									"name" : "LeaderBoard"
 							},
 							{
 									"format" : "300x250",
-									"id" : 1,
+									"id" : 1345,
 									"name" : "BigBox"
 							}
 					],
 					"errorFormat" : "lightweight",
-					"external" : false,
-					"externalId" : 0,
+					"external" : true,
+					"externalId" : 7654321,
 					"lossFormat" : "lightweight",
 					"minTimeAvailableMs" : 5.0,
 					"winFormat" : "full"
 			},
-			"price": 1.0,
+			"price": 10.0,
 			"period": 30000,
 			"balance":  1500
 		},
@@ -64,30 +64,30 @@
 					},
 					"bidProbability" : 0.1,
 					"creatives" : [
-							{
-									"format" : "728x90",
-									"id" : 5,
-									"name" : "LeaderBoard"
-							},
-							{
-									"format" : "160x600",
-									"id" : 3,
-									"name" : "LeaderBoard"
-							},
-							{
-									"format" : "300x250",
-									"id" : 4,
-									"name" : "BigBox"
-							}
+                        {
+                                "format" : "728x90",
+                                "id" : 111,
+                                "name" : "LeaderBoard"
+                        },
+                        {
+                                "format" : "160x600",
+                                "id" : 222,
+                                "name" : "LeaderBoard"
+                        },
+                        {
+                                "format" : "300x250",
+                                "id" : 333,
+                                "name" : "BigBox"
+                        }
 					],
 					"errorFormat" : "lightweight",
-					"external" : false,
-					"externalId" : 1,
+					"external" : true,
+					"externalId" : 1234567,
 					"lossFormat" : "lightweight",
 					"minTimeAvailableMs" : 5.0,
 					"winFormat" : "full"
 			},
-			"price": 1.0,
+			"price": 10.0,
 			"period": 30000,
 			"balance":  1500
 		}

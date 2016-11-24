@@ -19,7 +19,7 @@ const initialCapacity = 25 // No special reason why it's 25.
 
 type Creative struct {
 	Format string `json:"format"`
-	Id     int    `json:"id"`
+	ID     int    `json:"id"`
 	Name   string `json:"name"`
 }
 
@@ -55,18 +55,18 @@ type Agent struct {
 	// private state of each agent
 	registered bool      // did we register the configuration in the ACS?
 	pacer      chan bool // go routine updating balance in the banker
-	bidId      int       // unique id for response
+	bidID      int       // unique id for response
 }
 
 type creativesKey struct {
 	// This is used to make a mapping between an impression and the
 	// external-id of an agent to the creatives that can be sent to the
 	// exchange for that impression.
-	ImpId string
-	ExtId int
+	ImpID string
+	ExtID int
 }
 
-// Register Agent in the ACS sending a HTTP request to the service on `acsIp`:`acsPort`
+// RegisterAgent in the ACS sending a HTTP request to the service on `acsIp`:`acsPort`
 func (agent *Agent) RegisterAgent(
 	httpClient *http.Client, acsIp string, acsPort int) {
 	url := fmt.Sprintf("http://%s:%d/v1/agents/%s/config", acsIp, acsPort, agent.Name)
@@ -146,31 +146,42 @@ func (agent *Agent) DoBid(
 	req *openrtb.BidRequest, res *openrtb.BidResponse, ids map[creativesKey]interface{}) (*openrtb.BidResponse, bool) {
 
 	for _, imp := range req.Imp {
-		key := creativesKey{ImpId: imp.ID, ExtId: agent.Config.ExternalId}
+		key := creativesKey{ImpID: imp.ID, ExtID: agent.Config.ExternalId}
 		if ids[key] == nil {
 			continue
 		}
+
 		creativeList := ids[key].([]interface{})
 		// pick a random creative
 		n := rand.Intn(len(creativeList))
 
 		// JSON reads numbers as float64...
-		cridx := int(creativeList[n].(float64))
+		// cridx := int(creativeList[n].(float64))
 		// ...but this (`cridx` see below) is an index.
-		creative := agent.Config.Creatives[cridx]
-		crid := strconv.Itoa(creative.Id)
+		// fmt.Println("Bid request:")
+		// fmt.Println(req)
+		// creative := agent.Config.Creatives[cridx]
+		creative := agent.Config.Creatives[n]
+		crid := strconv.Itoa(creative.ID)
 
-		// the `bidId` should be something else,
+		fmt.Printf("Impression ID: %s \n", imp.ID)
+		fmt.Println("ids:")
+		fmt.Println(ids)
+		fmt.Println("creative:")
+		fmt.Println(creative)
+		fmt.Printf("crid: %s \n", crid)
+
+		// the `bidID` should be something else,
 		// it is used for tracking the bid,
 		// but we are not tracking anything yet.
-		bidId := strconv.Itoa(agent.bidId)
+		bidID := strconv.Itoa(agent.bidID)
 
 		price := float64(agent.Price)
 
 		ext := map[string]interface{}{"priority": 1.0, "external-id": agent.Config.ExternalId}
 		jsonExt, _ := json.Marshal(ext)
-		bid := openrtb.Bid{ID: bidId, ImpID: imp.ID, CreativeID: crid, Price: price, Ext: jsonExt}
-		agent.bidId += 1
+		bid := openrtb.Bid{ID: bidID, ImpID: imp.ID, CreativeID: crid, Price: price, Ext: jsonExt}
+		agent.bidID++
 		res.SeatBid[0].Bid = append(res.SeatBid[0].Bid, bid)
 	}
 	return res, len(res.SeatBid[0].Bid) > 0
@@ -187,9 +198,12 @@ func externalIdsFromRequest(req *openrtb.BidRequest) map[creativesKey]interface{
 		var extJSON map[string]interface{}
 		_ = json.Unmarshal(imp.Ext, &extJSON)
 
+		//TODO: figure out where the list of eligible creatives is going
+
 		for _, extID := range extJSON["external-ids"].([]interface{}) {
-			key := creativesKey{ImpId: imp.ID, ExtId: int(extID.(float64))}
-			creatives := (extJSON["creative-ids"].(map[string]interface{}))[strconv.Itoa(int(extID.(float64)))]
+			extID = int(extID.(float64))
+			key := creativesKey{ImpID: imp.ID, ExtID: extID.(int)}
+			creatives := (extJSON["creative-ids"].(map[string]interface{}))[strconv.Itoa(extID.(int))]
 			ids[key] = creatives.(interface{})
 		}
 	}

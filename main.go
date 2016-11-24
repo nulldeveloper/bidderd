@@ -73,6 +73,8 @@ func main() {
 			tmpOk bool = true
 		)
 		enc := json.NewEncoder(w)
+		// body, _ := ioutil.ReadAll(r.Body)
+		// fmt.Println(string(body))
 		var req *openrtb.BidRequest
 		err = json.NewDecoder(r.Body).Decode(&req)
 		// req, err := openrtb.ParseRequest(r.Body)
@@ -122,6 +124,7 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 		io.WriteString(w, "")
 		log.Println("Win!")
+		os.Exit(0)
 	})
 	go http.ListenAndServe(fmt.Sprintf(":%d", BidderWin), winmux)
 
