@@ -184,9 +184,12 @@ func externalIdsFromRequest(req *openrtb.BidRequest) map[creativesKey]interface{
 	ids := make(map[creativesKey]interface{})
 
 	for _, imp := range req.Imp {
-		for _, extID := range imp.Ext["external-ids"].([]interface{}) {
+		var extJSON map[string]interface{}
+		_ = json.Unmarshal(imp.Ext, &extJSON)
+
+		for _, extID := range extJSON["external-ids"].([]interface{}) {
 			key := creativesKey{ImpId: imp.ID, ExtId: int(extID.(float64))}
-			creatives := (imp.Ext["creative-ids"].(map[string]interface{}))[strconv.Itoa(int(extID.(float64)))]
+			creatives := (extJSON["creative-ids"].(map[string]interface{}))[strconv.Itoa(int(extID.(float64)))]
 			ids[key] = creatives.(interface{})
 		}
 	}
