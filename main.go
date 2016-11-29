@@ -64,6 +64,8 @@ func main() {
 		agent.StartPacer(client, BankerIp, BankerPort)
 	}
 
+	StartStatOutput()
+
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/auctions", track(func(w http.ResponseWriter, r *http.Request) {
@@ -95,6 +97,8 @@ func main() {
 			ok = tmpOk || ok
 		}
 
+		BidIncoming()
+
 		if ok {
 			w.Header().Set("Content-type", "application/json")
 			w.Header().Add("x-openrtb-version", "2.1")
@@ -114,7 +118,8 @@ func main() {
 		defer r.Body.Close()
 		w.WriteHeader(http.StatusOK)
 		io.WriteString(w, "")
-		log.Println("Event!")
+		// log.Println("Event!")
+		BidEvent()
 	})
 	go http.ListenAndServe(fmt.Sprintf(":%d", BidderEvent), evemux)
 
@@ -123,7 +128,8 @@ func main() {
 		defer r.Body.Close()
 		w.WriteHeader(http.StatusOK)
 		io.WriteString(w, "")
-		log.Println("Win!")
+		// log.Println("Win!")
+		BidWin()
 	})
 	go http.ListenAndServe(fmt.Sprintf(":%d", BidderWin), winmux)
 

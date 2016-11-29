@@ -25,6 +25,11 @@ var Wins = 0
 //Events = counter for # of events in the last OutputPerSeconds
 var Events = 0
 
+//Bids = counter for # of bids in the last OutputPerSeconds
+var Bids = 0
+
+var outputChannel = make(chan bool)
+
 type Creative struct {
 	Format string `json:"format"`
 	ID     int    `json:"id"`
@@ -142,8 +147,54 @@ func (agent *Agent) StartPacer(
 	}()
 }
 
+// StartStatOutput is responsible for displaying the number of wins and events per timer tick
+func StartStatOutput() {
+	tickerChannel := time.NewTicker(time.Second * time.Duration(OutputPerSeconds)).C
+
+	go func() {
+
+		for {
+			select {
+			case <-tickerChannel:
+				printStats()
+			case <-outputChannel:
+				return
+			}
+		}
+	}()
+}
+
+func BidWin() {
+	Wins++
+}
+
+func BidEvent() {
+	Events++
+}
+
+func BidIncoming() {
+	Bids++
+}
+
+func printStats() {
+	tempWins := Wins
+	Wins = 0
+	winsPerSecond := float32(tempWins) / float32(OutputPerSeconds)
+	tempEvents := Events
+	Events = 0
+	eventsPerSecond := float32(tempEvents) / float32(OutputPerSeconds)
+	tempBids := Bids
+	Bids = 0
+	bidsPerSecond := float32(tempBids) / float32(OutputPerSeconds)
+	log.Println("***********************")
+	log.Printf("Bids: %d (%f/second)", tempBids, bidsPerSecond)
+	log.Printf("Wins: %d (%f/second)", tempWins, winsPerSecond)
+	log.Printf("Events: %d (%f/second)", tempEvents, eventsPerSecond)
+}
+
 // Stops the go routine updating the bank balance.
 func (agent *Agent) StopPacer() {
+	close(outputChannel)
 	close(agent.pacer)
 }
 
