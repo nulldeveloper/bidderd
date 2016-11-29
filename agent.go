@@ -179,17 +179,17 @@ func BidIncoming() {
 func printStats() {
 	tempWins := Wins
 	Wins = 0
-	winsPerSecond := float32(tempWins) / float32(OutputPerSeconds)
+	winsPerSecond := tempWins / OutputPerSeconds
 	tempEvents := Events
 	Events = 0
-	eventsPerSecond := float32(tempEvents) / float32(OutputPerSeconds)
+	eventsPerSecond := tempEvents / OutputPerSeconds
 	tempBids := Bids
 	Bids = 0
-	bidsPerSecond := float32(tempBids) / float32(OutputPerSeconds)
+	bidsPerSecond := tempBids / OutputPerSeconds
 	log.Println("***********************")
-	log.Printf("Bids: %d (%f/second)", tempBids, bidsPerSecond)
-	log.Printf("Wins: %d (%f/second)", tempWins, winsPerSecond)
-	log.Printf("Events: %d (%f/second)", tempEvents, eventsPerSecond)
+	log.Printf("Bids: %d (%d/second)", tempBids, bidsPerSecond)
+	log.Printf("Wins: %d (%d/second)", tempWins, winsPerSecond)
+	log.Printf("Events: %d (%d/second)", tempEvents, eventsPerSecond)
 }
 
 // Stops the go routine updating the bank balance.
