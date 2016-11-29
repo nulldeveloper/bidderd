@@ -39,6 +39,7 @@ type AgentConfig struct {
 	LossFormat         string           `json:"lossFormat"`
 	MinTimeAvailableMs float64          `json:"minTimeAvailableMs"`
 	WinFormat          string           `json:"winFormat"`
+	BidderInterface    string           `json:"bidderInterface"`
 }
 
 // This represents a RTBKIT Agent

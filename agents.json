@@ -1,94 +1,99 @@
 [
-		{ "name": "my_http_config",
-			"config": {
-					"account": ["hello", "world"],
-					"augmentations" : {
-							"frequency-cap-ex" : {
-									"config" : 42,
-									"filters" : {
-											"include" : [ "pass-frequency-cap-ex" ]
-									},
-									"required" : true
-							},
-							"random" : null
-					},
-					"bidControl" : {
-							"fixedBidCpmInMicros" : 0,
-							"type" : "RELAY"
-					},
-					"bidProbability" : 0.9,
-					"creatives" : [
-							{
-									"format" : "728x90",
-									"id" : 5678,
-									"name" : "LeaderBoard"
-							},
-							{
-									"format" : "160x600",
-									"id" : 9876,
-									"name" : "LeaderBoard"
-							},
-							{
-									"format" : "300x250",
-									"id" : 1345,
-									"name" : "BigBox"
-							}
-					],
-					"errorFormat" : "lightweight",
-					"external" : true,
-					"externalId" : 7654321,
-					"lossFormat" : "lightweight",
-					"minTimeAvailableMs" : 5.0,
-					"winFormat" : "full"
-			},
-			"price": 10.0,
-			"period": 30000,
-			"balance":  1500
-		},
-		{ "name": "my_http_config_two",
-			"config": {
-					"account" : [ "hello_two", "world_two" ],
-					"augmentations" : {
-							"frequency-cap-ex" : {
-									"config" : 42,
-									"filters" : {
-											"include" : [ "pass-frequency-cap-ex" ]
-									},
-									"required" : true
-							},
-							"random" : null
-					},
-					"bidControl" : {
-							"fixedBidCpmInMicros" : 0,
-							"type" : "RELAY"
-					},
-					"bidProbability" : 0.9,
-					"creatives" : [
-                        {
-                                "format" : "728x90",
-                                "id" : 111,
-                                "name" : "LeaderBoard"
-                        },
-                        {
-                                "format" : "160x600",
-                                "id" : 222,
-                                "name" : "LeaderBoard"
-                        },
-                        {
-                                "format" : "300x250",
-                                "id" : 333,
-                                "name" : "BigBox"
-                        }
-					],
-					"errorFormat" : "lightweight",
-					"external" : true,
-					"externalId" : 1234567,
-					"lossFormat" : "lightweight",
-					"minTimeAvailableMs" : 5.0,
-					"winFormat" : "full"
-			},
-			"price": 10.0,
-			"period": 30000,
-			"balance":  1500
-		}
+    {
+        "balance": 1500000,
+        "config": {
+            "account": [
+                "golang",
+                "agent1"
+            ],
+            "augmentations": {
+                "random": null
+            },
+            "bidControl": {
+                "fixedBidCpmInMicros": 0,
+                "type": "RELAY"
+            },
+            "bidProbability": 1,
+            "creatives": [
+                {
+                    "format": "728x90",
+                    "id": 0,
+                    "name": "LeaderBoard"
+                },
+                {
+                    "format": "160x600",
+                    "id": 1,
+                    "name": "LeaderBoard"
+                },
+                {
+                    "format": "300x250",
+                    "id": 2,
+                    "name": "BigBox"
+                }
+            ],
+            "errorFormat": "lightweight",
+            "external": true,
+            "externalId": 7654321,
+            "bidderInterface": "iface.http",
+            "lossFormat": "lightweight",
+            "minTimeAvailableMs": 5,
+            "winFormat": "full"
+        },
+        "name": "golang_http_bidder",
+        "period": 30,
+        "price": 1
+    },
+    {
+        "balance": 1500000,
+        "config": {
+            "account": [
+                "golang",
+                "agent2"
+            ],
+            "augmentations": {
+                "frequency-cap-ex": {
+                    "config": 42,
+                    "filters": {
+                        "include": [
+                            "pass-frequency-cap-ex"
+                        ]
+                    },
+                    "required": true
+                },
+                "random": null
+            },
+            "bidControl": {
+                "fixedBidCpmInMicros": 0,
+                "type": "RELAY"
+            },
+            "bidProbability": 1,
+            "creatives": [
+                {
+                    "format": "728x90",
+                    "id": 3,
+                    "name": "LeaderBoard"
+                },
+                {
+                    "format": "160x600",
+                    "id": 4,
+                    "name": "LeaderBoard"
+                },
+                {
+                    "format": "300x250",
+                    "id": 5,
+                    "name": "BigBox"
+                }
+            ],
+            "errorFormat": "lightweight",
+            "external": true,
+            "externalId": 1234567,
+            "lossFormat": "lightweight",
+            "minTimeAvailableMs": 5,
+            "winFormat": "full",
+            "bidderInterface": "iface.http"
+        },
+        "name": "golang_http_bidder_two",
+        "period": 30,
+        "price": 1
+    }
 ]

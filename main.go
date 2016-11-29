@@ -66,7 +66,7 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", track(func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/auctions", track(func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 		var (
 			ok    bool = true
