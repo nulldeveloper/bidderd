@@ -16,7 +16,14 @@ import (
 	openrtb "gopkg.in/bsm/openrtb.v2"
 )
 
-const initialCapacity = 25 // No special reason why it's 25.
+//OutputPerSeconds = number of seconds between stat output
+var OutputPerSeconds = 10
+
+//Wins = counter for # of wins in the last OutputPerSeconds
+var Wins = 0
+
+//Events = counter for # of events in the last OutputPerSeconds
+var Events = 0
 
 type Creative struct {
 	Format string `json:"format"`
@@ -183,8 +190,6 @@ func externalIdsFromRequest(req *openrtb.BidRequest) map[creativesKey]interface{
 	for _, imp := range req.Imp {
 		var extJSON map[string]interface{}
 		_ = json.Unmarshal(imp.Ext, &extJSON)
-
-		//TODO: figure out where the list of eligible creatives is going
 
 		for _, extID := range extJSON["external-ids"].([]interface{}) {
 			extID = int(extID.(float64))
