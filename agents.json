@@ -4,6 +4,182 @@
         "config": {
             "account": [
                 "golang",
+                "agent5"
+            ],
+            "augmentations": {
+                "random": null
+            },
+            "bidControl": {
+                "fixedBidCpmInMicros": 0,
+                "type": "RELAY"
+            },
+            "bidProbability": 1,
+            "creatives": [
+                {
+                    "format": "728x90",
+                    "id": 50,
+                    "name": "LeaderBoard"
+                },
+                {
+                    "format": "160x600",
+                    "id": 51,
+                    "name": "LeaderBoard"
+                },
+                {
+                    "format": "300x250",
+                    "id": 52,
+                    "name": "BigBox"
+                }
+            ],
+            "errorFormat": "lightweight",
+            "external": true,
+            "externalId": 76543215,
+            "bidderInterface": "iface.http",
+            "lossFormat": "lightweight",
+            "minTimeAvailableMs": 5,
+            "winFormat": "full"
+        },
+        "name": "golang_http_bidder_five",
+        "period": 30000,
+        "price": 1
+    },
+    {
+        "balance": 1500000,
+        "config": {
+            "account": [
+                "golang",
+                "agent6"
+            ],
+            "augmentations": {
+                "random": null
+            },
+            "bidControl": {
+                "fixedBidCpmInMicros": 0,
+                "type": "RELAY"
+            },
+            "bidProbability": 1,
+            "creatives": [
+                {
+                    "format": "728x90",
+                    "id": 60,
+                    "name": "LeaderBoard"
+                },
+                {
+                    "format": "160x600",
+                    "id": 61,
+                    "name": "LeaderBoard"
+                },
+                {
+                    "format": "300x250",
+                    "id": 62,
+                    "name": "BigBox"
+                }
+            ],
+            "errorFormat": "lightweight",
+            "external": true,
+            "externalId": 76543216,
+            "bidderInterface": "iface.http",
+            "lossFormat": "lightweight",
+            "minTimeAvailableMs": 5,
+            "winFormat": "full"
+        },
+        "name": "golang_http_bidder_six",
+        "period": 30000,
+        "price": 1
+    },
+    {
+        "balance": 1500000,
+        "config": {
+            "account": [
+                "golang",
+                "agent3"
+            ],
+            "augmentations": {
+                "random": null
+            },
+            "bidControl": {
+                "fixedBidCpmInMicros": 0,
+                "type": "RELAY"
+            },
+            "bidProbability": 1,
+            "creatives": [
+                {
+                    "format": "728x90",
+                    "id": 30,
+                    "name": "LeaderBoard"
+                },
+                {
+                    "format": "160x600",
+                    "id": 31,
+                    "name": "LeaderBoard"
+                },
+                {
+                    "format": "300x250",
+                    "id": 32,
+                    "name": "BigBox"
+                }
+            ],
+            "errorFormat": "lightweight",
+            "external": true,
+            "externalId": 76543213,
+            "bidderInterface": "iface.http",
+            "lossFormat": "lightweight",
+            "minTimeAvailableMs": 5,
+            "winFormat": "full"
+        },
+        "name": "golang_http_bidder_three",
+        "period": 30000,
+        "price": 1
+    },
+    {
+        "balance": 1500000,
+        "config": {
+            "account": [
+                "golang",
+                "agent4"
+            ],
+            "augmentations": {
+                "random": null
+            },
+            "bidControl": {
+                "fixedBidCpmInMicros": 0,
+                "type": "RELAY"
+            },
+            "bidProbability": 1,
+            "creatives": [
+                {
+                    "format": "728x90",
+                    "id": 40,
+                    "name": "LeaderBoard"
+                },
+                {
+                    "format": "160x600",
+                    "id": 41,
+                    "name": "LeaderBoard"
+                },
+                {
+                    "format": "300x250",
+                    "id": 42,
+                    "name": "BigBox"
+                }
+            ],
+            "errorFormat": "lightweight",
+            "external": true,
+            "externalId": 76543214,
+            "bidderInterface": "iface.http",
+            "lossFormat": "lightweight",
+            "minTimeAvailableMs": 5,
+            "winFormat": "full"
+        },
+        "name": "golang_http_bidder_four",
+        "period": 30000,
+        "price": 1
+    },
+    {
+        "balance": 1500000,
+        "config": {
+            "account": [
+                "golang",
                 "agent1"
             ],
             "augmentations": {
@@ -40,7 +216,7 @@
             "winFormat": "full"
         },
         "name": "golang_http_bidder",
-        "period": 30,
+        "period": 30000,
         "price": 1
     },
     {
@@ -70,17 +246,17 @@
             "creatives": [
                 {
                     "format": "728x90",
-                    "id": 3,
+                    "id": 23,
                     "name": "LeaderBoard"
                 },
                 {
                     "format": "160x600",
-                    "id": 4,
+                    "id": 24,
                     "name": "LeaderBoard"
                 },
                 {
                     "format": "300x250",
-                    "id": 5,
+                    "id": 25,
                     "name": "BigBox"
                 }
             ],
@@ -93,7 +269,7 @@
             "bidderInterface": "iface.http"
         },
         "name": "golang_http_bidder_two",
-        "period": 30,
+        "period": 30000,
         "price": 1
     }
 ]
