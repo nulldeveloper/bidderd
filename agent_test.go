@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"gopkg.in/bsm/openrtb.v1"
+	"gopkg.in/bsm/openrtb.v2"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -88,8 +88,8 @@ func ExampleLoadAgentsFromFile() {
 }
 
 var _ = Describe("Agent", func() {
-	var res *openrtb.Response
-	var req *openrtb.Request
+	var res *openrtb.BidResponse
+	var req *openrtb.BidRequest
 	var a Agent
 
 	BeforeEach(func() {

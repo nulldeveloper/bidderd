@@ -11,7 +11,7 @@ import (
 	"os/signal"
 	"time"
 
-	"gopkg.in/bsm/openrtb.v1"
+	openrtb "gopkg.in/bsm/openrtb.v2"
 )
 
 const (
@@ -25,8 +25,8 @@ const (
 )
 
 func timeTrack(start time.Time, name string) {
-	elapsed := time.Since(start)
-	log.Printf("%s request took %s", name, elapsed)
+	// elapsed := time.Since(start)
+	// log.Printf("%s request took %s", name, elapsed)
 }
 
 func track(fn http.HandlerFunc, name string) http.HandlerFunc {
@@ -36,12 +36,20 @@ func track(fn http.HandlerFunc, name string) http.HandlerFunc {
 	}
 }
 
+func printPortConfigs() {
+	log.Printf("Bidder port: %d", BidderPort)
+	log.Printf("Win port: %d", BidderWin)
+	log.Printf("Event port: %d", BidderEvent)
+}
+
 func main() {
 	var agentsConfigFile = flag.String("config", "", "Configuration file in JSON.")
 	flag.Parse()
 	if *agentsConfigFile == "" {
 		log.Fatal("You should provide a configuration file.")
 	}
+
+	printPortConfigs()
 
 	// http client to pace agents (note that it's pointer)
 	client := &http.Client{}
@@ -58,14 +66,18 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", track(func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/auctions", track(func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 		var (
 			ok    bool = true
 			tmpOk bool = true
 		)
 		enc := json.NewEncoder(w)
-		req, err := openrtb.ParseRequest(r.Body)
+		// body, _ := ioutil.ReadAll(r.Body)
+		// fmt.Println(string(body))
+		var req *openrtb.BidRequest
+		err = json.NewDecoder(r.Body).Decode(&req)
+		// req, err := openrtb.ParseRequest(r.Body)
 
 		if err != nil {
 			log.Println("ERROR", err.Error())
@@ -73,7 +85,7 @@ func main() {
 			return
 		}
 
-		log.Println("INFO Received bid request", *req.Id)
+		// log.Println("INFO Received bid request", req.ID)
 
 		ids := externalIdsFromRequest(req)
 		res := emptyResponseWithOneSeat(req)
