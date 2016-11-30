@@ -11,6 +11,8 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/valyala/fasthttp"
+
 	openrtb "gopkg.in/bsm/openrtb.v2"
 )
 
@@ -42,6 +44,51 @@ func printPortConfigs() {
 	log.Printf("Event port: %d", BidderEvent)
 }
 
+func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []Agent) {
+	var (
+		ok    bool = true
+		tmpOk bool = true
+	)
+
+	// enc := json.NewEncoder(w)
+	// body, _ := ioutil.ReadAll(r.Body)
+	// fmt.Println(string(body))
+	var req *openrtb.BidRequest
+	err := json.Unmarshal(ctx.PostBody(), &req)
+	// req, err := openrtb.ParseRequest(r.Body)
+
+	if err != nil {
+		log.Println("ERROR", err.Error())
+		ctx.SetStatusCode(204)
+		return
+	}
+
+	// log.Println("INFO Received bid request", req.ID)
+
+	ids := externalIdsFromRequest(req)
+	res := emptyResponseWithOneSeat(req)
+
+	for _, agent := range agents {
+		res, tmpOk = agent.DoBid(req, res, ids)
+		ok = tmpOk || ok
+	}
+
+	BidIncoming()
+
+	if ok {
+		ctx.Response.Header.Set("Content-type", "application/json")
+		ctx.Response.Header.Set("x-openrtb-version", "2.1")
+		ctx.SetStatusCode(http.StatusOK)
+
+		bytes, _ := json.Marshal(res)
+		ctx.SetBody(bytes)
+
+		return
+	}
+	log.Println("No bid.")
+	ctx.SetStatusCode(204)
+}
+
 func main() {
 	var agentsConfigFile = flag.String("config", "", "Configuration file in JSON.")
 	flag.Parse()
@@ -56,62 +103,72 @@ func main() {
 
 	// load configuration
 	agents, err := LoadAgentsFromFile(*agentsConfigFile)
+
 	if err != nil {
 		log.Fatal(err)
 	}
-	for _, agent := range agents {
-		agent.RegisterAgent(client, ACSIp, ACSPort)
-		agent.StartPacer(client, BankerIp, BankerPort)
-	}
+	// for _, agent := range agents {
+	// 	// agent.RegisterAgent(client, ACSIp, ACSPort)
+	// 	// agent.StartPacer(client, BankerIp, BankerPort)
+	// }
 
 	StartStatOutput()
 
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("/auctions", track(func(w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
-		var (
-			ok    bool = true
-			tmpOk bool = true
-		)
-		enc := json.NewEncoder(w)
-		// body, _ := ioutil.ReadAll(r.Body)
-		// fmt.Println(string(body))
-		var req *openrtb.BidRequest
-		err = json.NewDecoder(r.Body).Decode(&req)
-		// req, err := openrtb.ParseRequest(r.Body)
-
-		if err != nil {
-			log.Println("ERROR", err.Error())
-			w.WriteHeader(204) // respond with 'no bid'
-			return
+	m := func(ctx *fasthttp.RequestCtx) {
+		switch string(ctx.Path()) {
+		case "/auctions":
+			fastHandleAuctions(ctx, agents)
+		default:
+			ctx.Error("not found", fasthttp.StatusNotFound)
 		}
+	}
 
-		// log.Println("INFO Received bid request", req.ID)
+	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderPort), m)
 
-		ids := externalIdsFromRequest(req)
-		res := emptyResponseWithOneSeat(req)
-
-		for _, agent := range agents {
-			res, tmpOk = agent.DoBid(req, res, ids)
-			ok = tmpOk || ok
-		}
-
-		BidIncoming()
-
-		if ok {
-			w.Header().Set("Content-type", "application/json")
-			w.Header().Add("x-openrtb-version", "2.1")
-			w.WriteHeader(http.StatusOK)
-			enc.Encode(res)
-			return
-		}
-		log.Println("No bid.")
-		w.WriteHeader(204)
-
-	}, "bidding"))
-
-	go http.ListenAndServe(fmt.Sprintf(":%d", BidderPort), mux)
+	// mux := http.NewServeMux()
+	//
+	// mux.HandleFunc("/auctions", track(func(w http.ResponseWriter, r *http.Request) {
+	// 	defer r.Body.Close()
+	// 	var (
+	// 		ok    bool = true
+	// 		tmpOk bool = true
+	// 	)
+	// 	enc := json.NewEncoder(w)
+	// 	// body, _ := ioutil.ReadAll(r.Body)
+	// 	// fmt.Println(string(body))
+	// 	var req *openrtb.BidRequest
+	// 	err = json.NewDecoder(r.Body).Decode(&req)
+	// 	// req, err := openrtb.ParseRequest(r.Body)
+	//
+	// 	if err != nil {
+	// 		log.Println("ERROR", err.Error())
+	// 		w.WriteHeader(204) // respond with 'no bid'
+	// 		return
+	// 	}
+	//
+	// 	// log.Println("INFO Received bid request", req.ID)
+	//
+	// 	ids := externalIdsFromRequest(req)
+	// 	res := emptyResponseWithOneSeat(req)
+	//
+	// 	for _, agent := range agents {
+	// 		res, tmpOk = agent.DoBid(req, res, ids)
+	// 		ok = tmpOk || ok
+	// 	}
+	//
+	// 	BidIncoming()
+	//
+	// 	if ok {
+	// 		w.Header().Set("Content-type", "application/json")
+	// 		w.Header().Add("x-openrtb-version", "2.1")
+	// 		w.WriteHeader(http.StatusOK)
+	// 		enc.Encode(res)
+	// 		return
+	// 	}
+	// 	log.Println("No bid.")
+	// 	w.WriteHeader(204)
+	//
+	// }, "bidding"))
 
 	evemux := http.NewServeMux()
 	evemux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
