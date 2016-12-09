@@ -107,10 +107,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// for _, agent := range agents {
-	// 	// agent.RegisterAgent(client, ACSIp, ACSPort)
-	// 	// agent.StartPacer(client, BankerIp, BankerPort)
-	// }
+	for _, agent := range agents {
+		agent.RegisterAgent(client, ACSIp, ACSPort)
+		agent.StartPacer(client, BankerIp, BankerPort)
+	}
 
 	StartStatOutput()
 
@@ -185,6 +185,8 @@ func main() {
 		defer r.Body.Close()
 		w.WriteHeader(http.StatusOK)
 		io.WriteString(w, "")
+		// body, _ := ioutil.ReadAll(r.Body)
+		// fmt.Println(string(body))
 		// log.Println("Win!")
 		BidWin()
 	})
