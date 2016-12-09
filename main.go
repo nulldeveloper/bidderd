@@ -90,7 +90,7 @@ func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []Agent) {
 }
 
 func main() {
-	var agentsConfigFile = flag.String("config", "", "Configuration file in JSON.")
+	var agentsConfigFile = flag.String("config", "agents.json", "Configuration file in JSON.")
 	flag.Parse()
 	if *agentsConfigFile == "" {
 		log.Fatal("You should provide a configuration file.")
