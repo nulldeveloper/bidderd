@@ -125,51 +125,6 @@ func main() {
 
 	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderPort), m)
 
-	// mux := http.NewServeMux()
-	//
-	// mux.HandleFunc("/auctions", track(func(w http.ResponseWriter, r *http.Request) {
-	// 	defer r.Body.Close()
-	// 	var (
-	// 		ok    bool = true
-	// 		tmpOk bool = true
-	// 	)
-	// 	enc := json.NewEncoder(w)
-	// 	// body, _ := ioutil.ReadAll(r.Body)
-	// 	// fmt.Println(string(body))
-	// 	var req *openrtb.BidRequest
-	// 	err = json.NewDecoder(r.Body).Decode(&req)
-	// 	// req, err := openrtb.ParseRequest(r.Body)
-	//
-	// 	if err != nil {
-	// 		log.Println("ERROR", err.Error())
-	// 		w.WriteHeader(204) // respond with 'no bid'
-	// 		return
-	// 	}
-	//
-	// 	// log.Println("INFO Received bid request", req.ID)
-	//
-	// 	ids := externalIdsFromRequest(req)
-	// 	res := emptyResponseWithOneSeat(req)
-	//
-	// 	for _, agent := range agents {
-	// 		res, tmpOk = agent.DoBid(req, res, ids)
-	// 		ok = tmpOk || ok
-	// 	}
-	//
-	// 	BidIncoming()
-	//
-	// 	if ok {
-	// 		w.Header().Set("Content-type", "application/json")
-	// 		w.Header().Add("x-openrtb-version", "2.1")
-	// 		w.WriteHeader(http.StatusOK)
-	// 		enc.Encode(res)
-	// 		return
-	// 	}
-	// 	log.Println("No bid.")
-	// 	w.WriteHeader(204)
-	//
-	// }, "bidding"))
-
 	evemux := http.NewServeMux()
 	evemux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
