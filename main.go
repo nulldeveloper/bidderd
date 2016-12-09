@@ -123,7 +123,7 @@ func main() {
 		}
 	}
 
-	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderPort), m)
+	fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderPort), m)
 
 	evemux := http.NewServeMux()
 	evemux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -133,7 +133,7 @@ func main() {
 		// log.Println("Event!")
 		BidEvent()
 	})
-	go http.ListenAndServe(fmt.Sprintf(":%d", BidderEvent), evemux)
+	http.ListenAndServe(fmt.Sprintf(":%d", BidderEvent), evemux)
 
 	winmux := http.NewServeMux()
 	winmux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -145,7 +145,7 @@ func main() {
 		// log.Println("Win!")
 		BidWin()
 	})
-	go http.ListenAndServe(fmt.Sprintf(":%d", BidderWin), winmux)
+	http.ListenAndServe(fmt.Sprintf(":%d", BidderWin), winmux)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, os.Kill)
