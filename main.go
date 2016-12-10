@@ -4,12 +4,10 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"time"
 
 	"github.com/valyala/fasthttp"
 
@@ -25,18 +23,6 @@ const (
 	BidderWin          = 7653
 	BidderEvent        = 7652
 )
-
-func timeTrack(start time.Time, name string) {
-	// elapsed := time.Since(start)
-	// log.Printf("%s request took %s", name, elapsed)
-}
-
-func track(fn http.HandlerFunc, name string) http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
-		defer timeTrack(time.Now(), name)
-		fn(w, req)
-	}
-}
 
 func printPortConfigs() {
 	log.Printf("Bidder port: %d", BidderPort)
@@ -59,7 +45,7 @@ func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []Agent) {
 
 	if err != nil {
 		log.Println("ERROR", err.Error())
-		ctx.SetStatusCode(204)
+		ctx.SetStatusCode(fasthttp.StatusNoContent)
 		return
 	}
 
@@ -123,29 +109,24 @@ func main() {
 		}
 	}
 
-	fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderPort), m)
+	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderPort), m)
+	log.Println("Started Bid Mux")
 
-	evemux := http.NewServeMux()
-	evemux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
-		w.WriteHeader(http.StatusOK)
-		io.WriteString(w, "")
-		// log.Println("Event!")
+	eventmux := func(ctx *fasthttp.RequestCtx) {
+		ctx.SetStatusCode(http.StatusOK)
 		BidEvent()
-	})
-	http.ListenAndServe(fmt.Sprintf(":%d", BidderEvent), evemux)
+	}
 
-	winmux := http.NewServeMux()
-	winmux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
-		w.WriteHeader(http.StatusOK)
-		io.WriteString(w, "")
-		// body, _ := ioutil.ReadAll(r.Body)
-		// fmt.Println(string(body))
-		// log.Println("Win!")
+	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderEvent), eventmux)
+	log.Println("Started event Mux")
+
+	winmux := func(ctx *fasthttp.RequestCtx) {
+		ctx.SetStatusCode(fasthttp.StatusOK)
 		BidWin()
-	})
-	http.ListenAndServe(fmt.Sprintf(":%d", BidderWin), winmux)
+	}
+
+	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderWin), winmux)
+	log.Println("Started Win Mux")
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, os.Kill)
