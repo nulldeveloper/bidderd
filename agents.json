@@ -9,10 +9,6 @@
             "augmentations": {
                 "random": null
             },
-            "bidControl": {
-                "fixedBidCpmInMicros": 0,
-                "type": "RELAY"
-            },
             "bidProbability": 1,
             "creatives": [
                 {
@@ -41,7 +37,7 @@
         },
         "name": "golang_http_bidder_eleven",
         "period": 30000,
-        "price": 1
+        "price": 0.01
     },
     {
         "balance": 1500000,
@@ -53,10 +49,7 @@
             "augmentations": {
                 "random": null
             },
-            "bidControl": {
-                "fixedBidCpmInMicros": 0,
-                "type": "RELAY"
-            },
+
             "bidProbability": 1,
             "creatives": [
                 {
@@ -85,7 +78,7 @@
         },
         "name": "golang_http_bidder_ten",
         "period": 30000,
-        "price": 1
+        "price": 0.01
     },
     {
         "balance": 1500000,
@@ -97,10 +90,7 @@
             "augmentations": {
                 "random": null
             },
-            "bidControl": {
-                "fixedBidCpmInMicros": 0,
-                "type": "RELAY"
-            },
+
             "bidProbability": 1,
             "creatives": [
                 {
@@ -129,7 +119,7 @@
         },
         "name": "golang_http_bidder_nine",
         "period": 30000,
-        "price": 1
+        "price": 0.01
     },
     {
         "balance": 1500000,
@@ -141,10 +131,7 @@
             "augmentations": {
                 "random": null
             },
-            "bidControl": {
-                "fixedBidCpmInMicros": 0,
-                "type": "RELAY"
-            },
+
             "bidProbability": 1,
             "creatives": [
                 {
@@ -173,7 +160,7 @@
         },
         "name": "golang_http_bidder_eight",
         "period": 30000,
-        "price": 1
+        "price": 0.01
     },
     {
         "balance": 1500000,
@@ -185,10 +172,7 @@
             "augmentations": {
                 "random": null
             },
-            "bidControl": {
-                "fixedBidCpmInMicros": 0,
-                "type": "RELAY"
-            },
+
             "bidProbability": 1,
             "creatives": [
                 {
@@ -217,7 +201,7 @@
         },
         "name": "golang_http_bidder_seven",
         "period": 30000,
-        "price": 1
+        "price": 0.01
     },
     {
         "balance": 1500000,
@@ -229,10 +213,7 @@
             "augmentations": {
                 "random": null
             },
-            "bidControl": {
-                "fixedBidCpmInMicros": 0,
-                "type": "RELAY"
-            },
+
             "bidProbability": 1,
             "creatives": [
                 {
@@ -261,7 +242,7 @@
         },
         "name": "golang_http_bidder_five",
         "period": 30000,
-        "price": 1
+        "price": 0.01
     },
     {
         "balance": 1500000,
@@ -273,10 +254,7 @@
             "augmentations": {
                 "random": null
             },
-            "bidControl": {
-                "fixedBidCpmInMicros": 0,
-                "type": "RELAY"
-            },
+
             "bidProbability": 1,
             "creatives": [
                 {
@@ -305,7 +283,7 @@
         },
         "name": "golang_http_bidder_six",
         "period": 30000,
-        "price": 1
+        "price": 0.01
     },
     {
         "balance": 1500000,
@@ -317,10 +295,7 @@
             "augmentations": {
                 "random": null
             },
-            "bidControl": {
-                "fixedBidCpmInMicros": 0,
-                "type": "RELAY"
-            },
+
             "bidProbability": 1,
             "creatives": [
                 {
@@ -349,7 +324,7 @@
         },
         "name": "golang_http_bidder_three",
         "period": 30000,
-        "price": 1
+        "price": 0.01
     },
     {
         "balance": 1500000,
@@ -361,10 +336,7 @@
             "augmentations": {
                 "random": null
             },
-            "bidControl": {
-                "fixedBidCpmInMicros": 0,
-                "type": "RELAY"
-            },
+
             "bidProbability": 1,
             "creatives": [
                 {
@@ -393,7 +365,7 @@
         },
         "name": "golang_http_bidder_four",
         "period": 30000,
-        "price": 1
+        "price": 0.01
     },
     {
         "balance": 1500000,
@@ -405,10 +377,7 @@
             "augmentations": {
                 "random": null
             },
-            "bidControl": {
-                "fixedBidCpmInMicros": 0,
-                "type": "RELAY"
-            },
+
             "bidProbability": 1,
             "creatives": [
                 {
@@ -437,7 +406,7 @@
         },
         "name": "golang_http_bidder",
         "period": 30000,
-        "price": 1
+        "price": 0.01
     },
     {
         "balance": 1500000,
@@ -458,10 +427,7 @@
                 },
                 "random": null
             },
-            "bidControl": {
-                "fixedBidCpmInMicros": 0,
-                "type": "RELAY"
-            },
+
             "bidProbability": 1,
             "creatives": [
                 {
@@ -490,6 +456,6 @@
         },
         "name": "golang_http_bidder_two",
         "period": 30000,
-        "price": 1
+        "price": 0.01
     }
 ]

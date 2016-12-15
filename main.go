@@ -57,9 +57,12 @@ func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []Agent) {
 	for _, agent := range agents {
 		res, tmpOk = agent.DoBid(req, res, ids)
 		ok = tmpOk || ok
-	}
 
-	BidIncoming()
+		if tmpOk {
+			BidIncoming()
+		}
+
+	}
 
 	if ok {
 		ctx.Response.Header.Set("Content-type", "application/json")
