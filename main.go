@@ -22,6 +22,7 @@ const (
 	BidderPort         = 7654
 	BidderWin          = 7653
 	BidderEvent        = 7652
+	BidderError        = 7651
 )
 
 func printPortConfigs() {
@@ -61,7 +62,6 @@ func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []Agent) {
 		if tmpOk {
 			BidIncoming()
 		}
-
 	}
 
 	if ok {
@@ -116,6 +116,20 @@ func main() {
 	log.Println("Started Bid Mux")
 
 	eventmux := func(ctx *fasthttp.RequestCtx) {
+		// var f interface{}
+
+		// s := string(ctx.Request.Header.Header()[:])
+		// s := string(ctx.Request.Body()[:])
+		// log.Println("string is", s)
+
+		// for name, headers := range ctx.Request.Header.Header() {
+		// 	name = strings.ToLower(name)
+		// 	for _, h := range headers {
+		// 		log.Println(name, h)
+		// 		// 	request = append(request, fmt.Sprintf(“%v: %v”, name, h))
+		// 	}
+		// }
+
 		ctx.SetStatusCode(http.StatusOK)
 		BidEvent()
 	}
@@ -123,7 +137,41 @@ func main() {
 	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderEvent), eventmux)
 	log.Println("Started event Mux")
 
+	errormux := func(ctx *fasthttp.RequestCtx) {
+		// var f interface{}
+
+		s := string(ctx.Request.Header.Header()[:])
+		log.Println("string is", s)
+
+		// for name, headers := range ctx.Request.Header.Header() {
+		// 	name = strings.ToLower(name)
+		// 	for _, h := range headers {
+		// 		log.Println(name, h)
+		// 		// 	request = append(request, fmt.Sprintf(“%v: %v”, name, h))
+		// 	}
+		// }
+
+		ctx.SetStatusCode(http.StatusOK)
+		BidEvent()
+	}
+
+	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderError), errormux)
+	log.Println("Started error Mux")
+
+	// evemux := http.NewServeMux()
+	// evemux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	// 	log.Println(r.Header)
+	//
+	// 	defer r.Body.Close()
+	// 	w.WriteHeader(http.StatusOK)
+	// 	io.WriteString(w, "")
+	//
+	// 	BidEvent()
+	// })
+	// go http.ListenAndServe(fmt.Sprintf(":%d", BidderEvent), evemux)
+
 	winmux := func(ctx *fasthttp.RequestCtx) {
+		log.Println(ctx.PostBody())
 		ctx.SetStatusCode(fasthttp.StatusOK)
 		BidWin()
 	}

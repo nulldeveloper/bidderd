@@ -64,10 +64,10 @@ func TestLoadAndMarshallConfig(t *testing.T) {
 									"name" : "BigBox"
 							}
 					],
-					"errorFormat" : "lightweight",
+					"errorFormat" : "full",
 					"external" : false,
 					"externalId" : 0,
-					"lossFormat" : "lightweight",
+					"lossFormat" : "full",
 					"minTimeAvailableMs" : 5,
 					"winFormat" : "full"
 			}`
