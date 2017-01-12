@@ -84,7 +84,7 @@ func ExampleLoadAgentsFromFile() {
 		log.Fatal(err)
 	}
 	fmt.Println(agents[0].Name)
-	// Output: my_http_config
+	// Output: golang_http_bidder_eleven
 }
 
 var _ = Describe("Agent", func() {
@@ -93,17 +93,17 @@ var _ = Describe("Agent", func() {
 	var a Agent
 
 	BeforeEach(func() {
-		config := AgentConfig{Creatives: []Creative{Creative{Id: 1}}}
+		config := AgentConfig{Creatives: []Creative{Creative{ID: 1}}}
 		a = Agent{Name: "test_agent", Config: config, Price: 1.0, Period: 30000, Balance: 15000}
 		err := fixture("openrtb1_req", &req)
 		res = emptyResponseWithOneSeat(req)
 		Expect(err).NotTo(HaveOccurred())
-		Expect(req.Imp[0].Id).NotTo(BeNil())
+		Expect(req.Imp[0].ID).NotTo(BeNil())
 	})
 
 	It("bid should have a price", func() {
 		ids := externalIdsFromRequest(req)
 		a.DoBid(req, res, ids)
-		Expect(*res.Seatbid[0].Bid[0].Price).To(Equal(float32(1.0)))
+		Expect(res.SeatBid[0].Bid[0].Price).To(Equal(float32(1.0)))
 	})
 })

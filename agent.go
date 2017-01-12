@@ -97,7 +97,7 @@ func (agent *Agent) RegisterAgent(
 	res.Body.Close()
 }
 
-// Removes the agent configuration from the ACS
+// UnregisterAgent Removes the agent configuration from the ACS
 func (agent *Agent) UnregisterAgent(
 	httpClient *http.Client, acsIp string, acsPort int) {
 	url := fmt.Sprintf("http://%s:%d/v1/agents/%s/config", acsIp, acsPort, agent.Name)

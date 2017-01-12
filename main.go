@@ -19,11 +19,12 @@ const (
 	ACSPort            = 9986
 	BankerIp           = "127.0.0.1"
 	BankerPort         = 9985
-	BidderPort         = 7654
 	BidderWin          = 7653
 	BidderEvent        = 7652
 	BidderError        = 7651
 )
+
+var BidderPort int
 
 func printPortConfigs() {
 	log.Printf("Bidder port: %d", BidderPort)
@@ -48,6 +49,12 @@ func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []Agent) {
 		log.Println("ERROR", err.Error())
 		ctx.SetStatusCode(fasthttp.StatusNoContent)
 		return
+	}
+
+	if req.Test == 1 {
+		log.Println("the test is true")
+	} else {
+		log.Println("test is not true", req.Test)
 	}
 
 	// log.Println("INFO Received bid request", req.ID)
@@ -80,6 +87,8 @@ func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []Agent) {
 
 func main() {
 	var agentsConfigFile = flag.String("config", "agents.json", "Configuration file in JSON.")
+	flag.IntVar(&BidderPort, "port", 7654, "Port to listen on for router")
+
 	flag.Parse()
 	if *agentsConfigFile == "" {
 		log.Fatal("You should provide a configuration file.")
@@ -130,6 +139,7 @@ func main() {
 		// 	}
 		// }
 
+		log.Println("Event!!!!!")
 		ctx.SetStatusCode(http.StatusOK)
 		BidEvent()
 	}
@@ -171,7 +181,7 @@ func main() {
 	// go http.ListenAndServe(fmt.Sprintf(":%d", BidderEvent), evemux)
 
 	winmux := func(ctx *fasthttp.RequestCtx) {
-		log.Println(ctx.PostBody())
+		// log.Println(ctx.PostBody())
 		ctx.SetStatusCode(fasthttp.StatusOK)
 		BidWin()
 	}
