@@ -25,6 +25,11 @@
                     "format": "300x250",
                     "id": 2,
                     "name": "BigBox"
+                },
+                {
+                    "format": "320x50",
+                    "id": 3,
+                    "name": "cheeseburger"
                 }
             ],
             "errorFormat": "lightweight",
