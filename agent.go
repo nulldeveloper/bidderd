@@ -30,13 +30,14 @@ var Bids = 0
 
 var outputChannel = make(chan bool)
 
+// Creative ...
 type Creative struct {
 	Format string `json:"format"`
 	ID     int    `json:"id"`
 	Name   string `json:"name"`
 }
 
-// This is the agent configuration that will be sent to RTBKIT's ACS
+// AgentConfig This is the agent configuration that will be sent to RTBKIT's ACS
 type AgentConfig struct {
 	// We use `RawMessage` for Augmentations and BidcControl, because we
 	// don't need it, we just cache it.
@@ -54,7 +55,7 @@ type AgentConfig struct {
 	BidderInterface    string           `json:"bidderInterface"`
 }
 
-// This represents a RTBKIT Agent
+// Agent This represents a RTBKIT Agent
 type Agent struct {
 	Name   string      `json:"name"`
 	Config AgentConfig `json:"config"`
@@ -81,9 +82,8 @@ type creativesKey struct {
 }
 
 // RegisterAgent in the ACS sending a HTTP request to the service on `acsIp`:`acsPort`
-func (agent *Agent) RegisterAgent(
-	httpClient *http.Client, acsIp string, acsPort int) {
-	url := fmt.Sprintf("http://%s:%d/v1/agents/%s/config", acsIp, acsPort, agent.Name)
+func (agent *Agent) RegisterAgent(httpClient *http.Client, acsIP string, acsPort int) {
+	url := fmt.Sprintf("http://%s:%d/v1/agents/%s/config", acsIP, acsPort, agent.Name)
 	body, _ := json.Marshal(agent.Config)
 	reader := bytes.NewReader(body)
 	req, _ := http.NewRequest("POST", url, reader)
@@ -111,7 +111,7 @@ func (agent *Agent) UnregisterAgent(
 	res.Body.Close()
 }
 
-// Starts a go routine which periodically updates the balance on the agents account.
+// StartPacer Starts a go routine which periodically updates the balance on the agents account.
 func (agent *Agent) StartPacer(
 	httpClient *http.Client, bankerIp string, bankerPort int) {
 
@@ -164,14 +164,17 @@ func StartStatOutput() {
 	}()
 }
 
+// BidWin ...
 func BidWin() {
 	Wins++
 }
 
+// BidEvent ...
 func BidEvent() {
 	Events++
 }
 
+// BidIncoming ...
 func BidIncoming() {
 	Bids++
 }
@@ -192,13 +195,13 @@ func printStats() {
 	log.Printf("Events: %d (%d/second)", tempEvents, eventsPerSecond)
 }
 
-// Stops the go routine updating the bank balance.
+// StopPacer Stops the go routine updating the bank balance.
 func (agent *Agent) StopPacer() {
 	close(outputChannel)
 	close(agent.pacer)
 }
 
-// Adds to the bid response the bid by the agent. The Bid is added to
+// DoBid Adds to the bid response the bid by the agent. The Bid is added to
 // the only seat of the response. It picks a random creative from
 // the list of creatives from the `Agent.Config.Creative` and places it
 // in the bid.
@@ -261,7 +264,7 @@ func emptyResponseWithOneSeat(req *openrtb.BidRequest) *openrtb.BidResponse {
 	return res
 }
 
-// Parse a JSON file and return an Agent.
+// LoadAgent Parse a JSON file and return an Agent.
 func LoadAgent(filepath string) (Agent, error) {
 	var agent Agent
 	data, err := ioutil.ReadFile(filepath)
@@ -275,7 +278,7 @@ func LoadAgent(filepath string) (Agent, error) {
 	return agent, nil
 }
 
-// Parse a JSON file and return a list of Agents.
+// LoadAgentsFromFile Parse a JSON file and return a list of Agents.
 func LoadAgentsFromFile(filepath string) ([]Agent, error) {
 	type Agents []Agent
 	var agents Agents
@@ -291,7 +294,7 @@ func LoadAgentsFromFile(filepath string) ([]Agent, error) {
 	return agents, nil
 }
 
-//FindCreativeIndexFromID takes a creative ID and an AgentConfig,
+// FindCreativeIndexFromID takes a creative ID and an AgentConfig,
 // returning a creative index usable by the RTBKit router
 func FindCreativeIndexFromID(crid int, agent AgentConfig) (string, error) {
 	for creativeIndex, creative := range agent.Creatives {
