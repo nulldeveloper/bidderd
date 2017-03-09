@@ -9,6 +9,11 @@
             "augmentations": {
                 "random": null
             },
+            "providerConfig": {
+                "smartrtb": {
+                    "seat": "12345"
+                }
+            },
             "bidProbability": 1,
             "creatives": [
                 {
