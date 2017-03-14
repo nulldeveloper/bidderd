@@ -32,9 +32,10 @@ var outputChannel = make(chan bool)
 
 // Creative ...
 type Creative struct {
-	Format string `json:"format"`
-	ID     int    `json:"id"`
-	Name   string `json:"name"`
+	Format         string           `json:"format"`
+	ID             int              `json:"id"`
+	Name           string           `json:"name"`
+	ProviderConfig *json.RawMessage `json:"providerConfig"`
 }
 
 // AgentConfig This is the agent configuration that will be sent to RTBKIT's ACS
@@ -51,6 +52,7 @@ type AgentConfig struct {
 	ExternalId         int              `json:"externalId"`
 	LossFormat         string           `json:"lossFormat"`
 	MinTimeAvailableMs float64          `json:"minTimeAvailableMs"`
+	ProviderConfig     *json.RawMessage `json:"providerConfig"`
 	WinFormat          string           `json:"winFormat"`
 	BidderInterface    string           `json:"bidderInterface"`
 }

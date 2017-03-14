@@ -1,0 +1,74 @@
+[
+    {
+        "balance": 1500000,
+        "config": {
+            "account": [
+                "golang",
+                "agent1"
+            ],
+            "augmentations": {
+                "random": null
+            },
+            "providerConfig": {
+                "smartrtb": {
+                    "seat": "12345"
+                }
+            },
+            "bidProbability": 1,
+            "creatives": [
+                {
+                    "format": "728x90",
+                    "id": 0,
+                    "name": "LeaderBoard",
+                    "providerConfig": {
+                        "smartrtb":{
+                            "adm": "XHTML",
+                            "nurl": "http://www.connectedinteractive.com",
+                            "adid": "2",
+                            "adomain": ["stuff"],
+                            "mimeTypes": ["2"]
+                        }
+                    }
+                },
+                {
+                    "format": "160x600",
+                    "id": 1,
+                    "name": "LeaderBoard",
+                    "providerConfig": {
+                        "smartrtb":{
+                            "adm": "XHTML",
+                            "nurl": "http://www.connectedinteractive.com",
+                            "adid": "2",
+                            "adomain": ["stuff"],
+                            "mimeTypes": ["2"]
+                        }
+                    }
+                },
+                {
+                    "format": "320x50",
+                    "id": 3,
+                    "name": "cheeseburger",
+                    "providerConfig": {
+                        "smartrtb":{
+                            "adm": "XHTML",
+                            "nurl": "http://www.connectedinteractive.com",
+                            "adid": "2",
+                            "adomain": ["stuff"],
+                            "mimeTypes": ["2"]
+                        }
+                    }
+                }
+            ],
+            "errorFormat": "lightweight",
+            "external": true,
+            "externalId": 7654321,
+            "bidderInterface": "iface.http",
+            "lossFormat": "lightweight",
+            "minTimeAvailableMs": 5,
+            "winFormat": "full"
+        },
+        "name": "golang_http_bidder",
+        "period": 30000,
+        "price": 0.01
+    }
+]
