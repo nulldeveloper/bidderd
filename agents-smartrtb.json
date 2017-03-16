@@ -26,7 +26,7 @@
                             "nurl": "http://www.connectedinteractive.com",
                             "adid": "2",
                             "adomain": ["stuff"],
-                            "mimeTypes": ["2"]
+                            "mimeTypes": ["application/javascript", "image/gif", "image/jpeg", "image/png", "text/html", "text/javascript", "text/plain"]
                         }
                     }
                 },
@@ -40,7 +40,7 @@
                             "nurl": "http://www.connectedinteractive.com",
                             "adid": "2",
                             "adomain": ["stuff"],
-                            "mimeTypes": ["2"]
+                            "mimeTypes": ["application/javascript", "image/gif", "image/jpeg", "image/png", "text/html", "text/javascript", "text/plain"]
                         }
                     }
                 },
@@ -53,8 +53,8 @@
                             "adm": "XHTML",
                             "nurl": "http://www.connectedinteractive.com",
                             "adid": "2",
-                            "adomain": ["stuff"],
-                            "mimeTypes": ["2"]
+                            "adomain": [],
+                            "mimeTypes": ["application/javascript", "image/gif", "image/jpeg", "image/png", "text/html", "text/javascript", "text/plain"]
                         }
                     }
                 }
@@ -68,7 +68,7 @@
             "winFormat": "full"
         },
         "name": "golang_http_bidder",
-        "period": 30000,
-        "price": 0.01
+        "period": 3000,
+        "price": 0.08
     }
 ]

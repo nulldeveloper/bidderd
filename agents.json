@@ -47,6 +47,6 @@
         },
         "name": "golang_http_bidder",
         "period": 30000,
-        "price": 0.01
+        "price": 0.05
     }
 ]

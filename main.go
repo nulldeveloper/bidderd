@@ -38,6 +38,8 @@ func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []Agent) {
 		tmpOk bool = true
 	)
 
+	log.Println("Got a bid!!")
+
 	// enc := json.NewEncoder(w)
 	// body, _ := ioutil.ReadAll(r.Body)
 	// fmt.Println(string(body))
@@ -73,7 +75,7 @@ func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []Agent) {
 
 	if ok {
 		ctx.Response.Header.Set("Content-type", "application/json")
-		ctx.Response.Header.Set("x-openrtb-version", "2.1")
+		ctx.Response.Header.Set("x-openrtb-version", "2.2")
 		ctx.SetStatusCode(http.StatusOK)
 
 		bytes, _ := json.Marshal(res)
