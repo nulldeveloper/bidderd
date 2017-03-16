@@ -34,6 +34,7 @@ var outputChannel = make(chan bool)
 type Creative struct {
 	Format         string           `json:"format"`
 	ID             int              `json:"id"`
+	UUID           string           `json:"uuid"`
 	Name           string           `json:"name"`
 	ProviderConfig *json.RawMessage `json:"providerConfig"`
 }
@@ -115,12 +116,12 @@ func (agent *Agent) UnregisterAgent(
 
 // StartPacer Starts a go routine which periodically updates the balance on the agents account.
 func (agent *Agent) StartPacer(
-	httpClient *http.Client, bankerIp string, bankerPort int) {
+	httpClient *http.Client, bankerIP string, bankerPort int) {
 
 	accounts := agent.Config.Account
 
 	url := fmt.Sprintf("http://%s:%d/v1/accounts/%s/balance",
-		bankerIp, bankerPort, strings.Join(accounts, ":"))
+		bankerIP, bankerPort, strings.Join(accounts, ":"))
 	body := fmt.Sprintf("{\"USD/1M\": %d}", agent.Balance)
 	ticker := time.NewTicker(time.Duration(agent.Period) * time.Millisecond)
 	agent.pacer = make(chan bool)
@@ -154,7 +155,6 @@ func StartStatOutput() {
 	tickerChannel := time.NewTicker(time.Second * time.Duration(OutputPerSeconds)).C
 
 	go func() {
-
 		for {
 			select {
 			case <-tickerChannel:

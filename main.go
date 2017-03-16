@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"sync"
 
 	"github.com/valyala/fasthttp"
 )
@@ -22,6 +23,10 @@ const (
 )
 
 var bidderPort int
+var wg sync.WaitGroup
+
+// http client to pace agents (note that it's pointer)
+var client = &http.Client{}
 
 func printPortConfigs() {
 	log.Printf("Bidder port: %d", bidderPort)
@@ -43,24 +48,18 @@ func setupHandlers(agents []Agent) {
 	log.Println("Started Bid Mux")
 }
 
-func eventMux(ctx *fasthttp.RequestCtx) {
-	// var f interface{}
+func cleanup(agents []Agent) {
+	stopRedisSubscriber()
+	// Implement remove agent from ACS
+	for _, agent := range agents {
+		agent.UnregisterAgent(client, ACSIp, ACSPort)
+	}
 
-	// s := string(ctx.Request.Header.Header()[:])
-	// s := string(ctx.Request.Body()[:])
-	// log.Println("string is", s)
+	fmt.Println("Leaving...")
 
-	// for name, headers := range ctx.Request.Header.Header() {
-	// 	name = strings.ToLower(name)
-	// 	for _, h := range headers {
-	// 		log.Println(name, h)
-	// 		// 	request = append(request, fmt.Sprintf(“%v: %v”, name, h))
-	// 	}
-	// }
-
-	log.Println("Event!!!!!")
-	ctx.SetStatusCode(http.StatusOK)
-	BidEvent()
+	for {
+		wg.Done()
+	}
 }
 
 func main() {
@@ -72,10 +71,11 @@ func main() {
 		log.Fatal("You should provide a configuration file.")
 	}
 
-	printPortConfigs()
+	setupClient()
+	go startRedisSubscriber()
+	wg.Add(1)
 
-	// http client to pace agents (note that it's pointer)
-	client := &http.Client{}
+	printPortConfigs()
 
 	// load configuration
 	agents, err := LoadAgentsFromFile(*agentsConfigFile)
@@ -89,50 +89,27 @@ func main() {
 	}
 
 	StartStatOutput()
-
 	setupHandlers(agents)
 
 	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderEvent), eventMux)
 	log.Println("Started event Mux")
 
-	errormux := func(ctx *fasthttp.RequestCtx) {
-		// var f interface{}
-
-		s := string(ctx.Request.Header.Header()[:])
-		log.Println("string is", s)
-
-		// for name, headers := range ctx.Request.Header.Header() {
-		// 	name = strings.ToLower(name)
-		// 	for _, h := range headers {
-		// 		log.Println(name, h)
-		// 		// 	request = append(request, fmt.Sprintf(“%v: %v”, name, h))
-		// 	}
-		// }
-
-		ctx.SetStatusCode(http.StatusOK)
-		BidEvent()
-	}
-
-	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderError), errormux)
+	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderError), errorMux)
 	log.Println("Started error Mux")
 
-	winmux := func(ctx *fasthttp.RequestCtx) {
-		// log.Println(ctx.PostBody())
-		ctx.SetStatusCode(fasthttp.StatusOK)
-		BidWin()
-	}
-
-	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderWin), winmux)
+	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderWin), winMux)
 	log.Println("Started Win Mux")
+
+	wg.Add(3)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, os.Kill)
-	select {
-	case <-c:
-		// Implement remove agent from ACS
-		for _, agent := range agents {
-			agent.UnregisterAgent(client, ACSIp, ACSPort)
-		}
-		fmt.Println("Leaving...")
-	}
+
+	go func() {
+		<-c
+		cleanup(agents)
+		os.Exit(1)
+	}()
+
+	wg.Wait()
 }
