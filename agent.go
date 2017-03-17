@@ -229,7 +229,7 @@ func (agent *Agent) DoBid(
 
 		ext := map[string]interface{}{"priority": 1.0, "external-id": agent.Config.ExternalId}
 		jsonExt, _ := json.Marshal(ext)
-		bid := openrtb.Bid{ID: bidID, ImpID: imp.ID, CreativeID: crid, Price: price * rand.Float64(), Ext: jsonExt}
+		bid := openrtb.Bid{ID: bidID, ImpID: imp.ID, CreativeID: crid, Price: price, Ext: jsonExt}
 		agent.bidID++
 		res.SeatBid[0].Bid = append(res.SeatBid[0].Bid, bid)
 	}
