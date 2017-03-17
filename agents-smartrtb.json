@@ -23,7 +23,7 @@
                     "providerConfig": {
                         "smartrtb":{
                             "adm": "XHTML",
-                            "nurl": "http://ec2-52-14-45-200.us-east-2.compute.amazonaws.com:3000/creatives/1/record_win/?auction_id=${AUCTION_ID}&bid_id=${AUCTION_BID_ID}&impression_id=${AUCTION_IMP_ID}&ad_id=${AUCTION_AD_ID}&price=${AUCTION_PRICE}",
+                            "nurl": "http://ec2-52-14-45-200.us-east-2.compute.amazonaws.com:3000/creatives/1/record_win/?auction_id=${AUCTION_ID}&impression_id=${AUCTION_IMP_ID}&price=${AUCTION_PRICE}",
                             "adid": "1",
                             "adomain": ["stuff"],
                             "mimeTypes": ["application/javascript", "image/gif", "image/jpeg", "image/png", "text/html", "text/javascript", "text/plain"]
@@ -37,7 +37,7 @@
                     "providerConfig": {
                         "smartrtb":{
                             "adm": "XHTML",
-                            "nurl": "http://ec2-52-14-45-200.us-east-2.compute.amazonaws.com:3000/creatives/2/record_win/?auction_id=${AUCTION_ID}&bid_id=${AUCTION_BID_ID}&impression_id=${AUCTION_IMP_ID}&ad_id=${AUCTION_AD_ID}&price=${AUCTION_PRICE}",
+                            "nurl": "http://ec2-52-14-45-200.us-east-2.compute.amazonaws.com:3000/creatives/2/record_win/?auction_id=${AUCTION_ID}&impression_id=${AUCTION_IMP_ID}&price=${AUCTION_PRICE}",
                             "adid": "2",
                             "adomain": ["stuff"],
                             "mimeTypes": ["application/javascript", "image/gif", "image/jpeg", "image/png", "text/html", "text/javascript", "text/plain"]
@@ -51,7 +51,7 @@
                     "providerConfig": {
                         "smartrtb":{
                             "adm": "XHTML",
-                            "nurl": "http://ec2-52-14-45-200.us-east-2.compute.amazonaws.com:3000/creatives/3/record_win/?auction_id=${AUCTION_ID}&bid_id=${AUCTION_BID_ID}&impression_id=${AUCTION_IMP_ID}&ad_id=${AUCTION_AD_ID}&price=${AUCTION_PRICE}",
+                            "nurl": "http://ec2-52-14-45-200.us-east-2.compute.amazonaws.com:3000/creatives/3/record_win/?auction_id=${AUCTION_ID}&impression_id=${AUCTION_IMP_ID}&price=${AUCTION_PRICE}",
                             "adid": "3",
                             "adomain": [],
                             "mimeTypes": ["application/javascript", "image/gif", "image/jpeg", "image/png", "text/html", "text/javascript", "text/plain"]
