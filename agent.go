@@ -280,20 +280,28 @@ func LoadAgent(filepath string) (Agent, error) {
 	return agent, nil
 }
 
-// LoadAgentsFromFile Parse a JSON file and return a list of Agents.
-func LoadAgentsFromFile(filepath string) ([]Agent, error) {
+func loadAgents(data []byte) ([]Agent, error) {
 	type Agents []Agent
 	var agents Agents
 
-	data, err := ioutil.ReadFile(filepath)
+	err := json.Unmarshal(data, &agents)
 	if err != nil {
-		return agents, err
-	}
-	err = json.Unmarshal(data, &agents)
-	if err != nil {
-		return agents, err
+		return nil, err
 	}
 	return agents, nil
+}
+
+// LoadAgentsFromFile Parse a JSON file and return a list of Agents.
+func LoadAgentsFromFile(filepath string) ([]Agent, error) {
+	data, err := ioutil.ReadFile(filepath)
+	if err != nil {
+		return nil, err
+	}
+	return loadAgents(data)
+}
+
+func loadAgentsFromString(agentsString string) ([]Agent, error) {
+	return loadAgents([]byte(agentsString))
 }
 
 // FindCreativeIndexFromID takes a creative ID and an AgentConfig,

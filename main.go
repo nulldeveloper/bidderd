@@ -13,9 +13,9 @@ import (
 )
 
 const (
-	ACSIp       = "127.0.0.1"
+	ACSIP       = "127.0.0.1"
 	ACSPort     = 9986
-	BankerIp    = "127.0.0.1"
+	BankerIP    = "127.0.0.1"
 	BankerPort  = 9985
 	BidderWin   = 7653
 	BidderEvent = 7652
@@ -24,6 +24,7 @@ const (
 
 var bidderPort int
 var wg sync.WaitGroup
+var _agents []Agent
 
 // http client to pace agents (note that it's pointer)
 var client = &http.Client{}
@@ -51,22 +52,33 @@ func setupHandlers(agents []Agent) {
 func cleanup(agents []Agent) {
 	stopRedisSubscriber()
 	// Implement remove agent from ACS
-	for _, agent := range agents {
-		agent.UnregisterAgent(client, ACSIp, ACSPort)
-	}
-
+	shutDownAgents(agents)
 	fmt.Println("Leaving...")
-
 	for {
 		wg.Done()
+	}
+}
+
+func startAgents(agents []Agent) {
+	log.Printf("Starting Up %d Agents", len(agents))
+	for _, agent := range agents {
+		agent.RegisterAgent(client, ACSIP, ACSPort)
+		agent.StartPacer(client, BankerIP, BankerPort)
+	}
+}
+
+func shutDownAgents(agents []Agent) {
+	log.Println("Shutting Down Agents")
+	for _, agent := range agents {
+		agent.UnregisterAgent(client, ACSIP, ACSPort)
 	}
 }
 
 func main() {
 	var agentsConfigFile = flag.String("config", "agents.json", "Configuration file in JSON.")
 	flag.IntVar(&bidderPort, "port", 7654, "Port to listen on for router")
-
 	flag.Parse()
+
 	if *agentsConfigFile == "" {
 		log.Fatal("You should provide a configuration file.")
 	}
@@ -78,18 +90,16 @@ func main() {
 	printPortConfigs()
 
 	// load configuration
-	agents, err := LoadAgentsFromFile(*agentsConfigFile)
+	_agents, err := LoadAgentsFromFile(*agentsConfigFile)
 
 	if err != nil {
 		log.Fatal(err)
 	}
-	for _, agent := range agents {
-		agent.RegisterAgent(client, ACSIp, ACSPort)
-		agent.StartPacer(client, BankerIp, BankerPort)
-	}
+
+	startAgents(_agents)
 
 	StartStatOutput()
-	setupHandlers(agents)
+	setupHandlers(_agents)
 
 	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderEvent), eventMux)
 	log.Println("Started event Mux")
@@ -107,7 +117,7 @@ func main() {
 
 	go func() {
 		<-c
-		cleanup(agents)
+		cleanup(_agents)
 		os.Exit(1)
 	}()
 

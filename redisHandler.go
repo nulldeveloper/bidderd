@@ -54,4 +54,13 @@ func stopRedisSubscriber() {
 func updateConfiguration(msg *redis.Message) {
 	log.Println("the message is", msg.Payload)
 
+	agents, err := loadAgentsFromString(msg.Payload)
+
+	if err != nil {
+		log.Fatal("Bad json configuration, sucka!!!!!!")
+	}
+
+	shutDownAgents(_agents)
+	_agents = agents
+	startAgents(_agents)
 }
