@@ -34,7 +34,7 @@ var outputChannel = make(chan bool)
 type Creative struct {
 	Format         string           `json:"format"`
 	ID             int              `json:"id"`
-	UUID           string           `json:"uuid"`
+	UUID           string           `json:"uuid,omitempty"`
 	Name           string           `json:"name"`
 	ProviderConfig *json.RawMessage `json:"providerConfig"`
 }
