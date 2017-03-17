@@ -225,7 +225,7 @@ func (agent *Agent) DoBid(
 
 		bidID := strconv.Itoa(agent.bidID)
 
-		price := float64(agent.Price)
+		price := float64(imp.BidFloor * 1.25)
 
 		ext := map[string]interface{}{"priority": 1.0, "external-id": agent.Config.ExternalId}
 		jsonExt, _ := json.Marshal(ext)
