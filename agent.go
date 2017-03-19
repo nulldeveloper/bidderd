@@ -233,6 +233,10 @@ func (agent *Agent) DoBid(
 		agent.bidID++
 		res.SeatBid[0].Bid = append(res.SeatBid[0].Bid, bid)
 	}
+
+	res.Currency = "USD"
+	res.BidID = strconv.Itoa(agent.bidID)
+
 	return res, len(res.SeatBid[0].Bid) > 0
 }
 

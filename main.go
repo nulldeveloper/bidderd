@@ -20,6 +20,7 @@ const (
 	BidderWin   = 7653
 	BidderEvent = 7652
 	BidderError = 7651
+	BiddingPort = 7654
 )
 
 var bidderPort int
@@ -76,7 +77,7 @@ func shutDownAgents(agents []Agent) {
 
 func main() {
 	var agentsConfigFile = flag.String("config", "agents.json", "Configuration file in JSON.")
-	flag.IntVar(&bidderPort, "port", 7654, "Port to listen on for router")
+	flag.IntVar(&bidderPort, "port", BiddingPort, "Port to listen on for router")
 	flag.Parse()
 
 	if *agentsConfigFile == "" {
