@@ -11,18 +11,18 @@
             },
             "providerConfig": {
                 "smartrtb": {
-                    "seat": "12345"
+                    "seat": "1"
                 }
             },
             "bidProbability": 1,
             "creatives": [
                 {
-                    "format": "728x90",
+                    "format": "300x250",
                     "id": 1,
-                    "name": "LeaderBoard",
+                    "name": "DBM1",
                     "providerConfig": {
                         "smartrtb":{
-                            "adm": "XHTML",
+                            "adm": "<a href=\"https://ads.connectedinteractive.com/ban/click/connec12529\" target=\"_self\"><img src=\"https://rdr.connectedinteractive.com/ngage/imp/connec12529\" border=\"0\"/></a>",
                             "nurl": "http://ec2-52-14-45-200.us-east-2.compute.amazonaws.com:3000/creatives/1/record_win?auction_id=${AUCTION_ID}&impression_id=${AUCTION_IMP_ID}&price=${AUCTION_PRICE}",
                             "adid": "1",
                             "adomain": ["www.connectedinterative.com"],
@@ -34,35 +34,18 @@
                     }
                 },
                 {
-                    "format": "160x600",
+                    "format": "300x250",
                     "id": 2,
-                    "name": "LeaderBoard",
+                    "name": "DBM2",
                     "providerConfig": {
                         "smartrtb":{
-                            "adm": "XHTML",
+                            "adm": "<a href=\"https://ads.connectedinteractive.com/ban/click/connec27665\" target=\"_self\"><img src=\"https://rdr.connectedinteractive.com/ngage/imp/connec27665\" border=\"0\"/></a>",
                             "nurl": "http://ec2-52-14-45-200.us-east-2.compute.amazonaws.com:3000/creatives/2/record_win?auction_id=${AUCTION_ID}&impression_id=${AUCTION_IMP_ID}&price=${AUCTION_PRICE}",
                             "adid": "2",
                             "adomain": ["www.connectedinterative.com"],
                             "mimeTypes": ["application/javascript", "image/gif", "image/jpeg", "image/png", "text/html", "text/javascript", "text/plain"],
                             "iurl": "http://cdn.example.com/ad.gif",
                             "crid": "2",
-                            "cur": "USD"
-                        }
-                    }
-                },
-                {
-                    "format": "320x50",
-                    "id": 3,
-                    "name": "cheeseburger",
-                    "providerConfig": {
-                        "smartrtb":{
-                            "adm": "XHTML",
-                            "nurl": "http://ec2-52-14-45-200.us-east-2.compute.amazonaws.com:3000/creatives/3/record_win?auction_id=${AUCTION_ID}&impression_id=${AUCTION_IMP_ID}&price=${AUCTION_PRICE}",
-                            "adid": "3",
-                            "adomain": ["www.connectedinterative.com"],
-                            "mimeTypes": ["application/javascript", "image/gif", "image/jpeg", "image/png", "text/html", "text/javascript", "text/plain"],
-                            "iurl": "http://cdn.example.com/ad.gif",
-                            "crid": "3",
                             "cur": "USD"
                         }
                     }
