@@ -28,7 +28,7 @@
                             "adomain": ["www.connectedinteractive.com"],
                             "mimeTypes": ["application/javascript", "image/gif", "image/jpeg", "image/png", "text/html", "text/javascript", "text/plain"],
                             "iurl": "http://cdn.example.com/ad.gif",
-                            "crid": "1",
+                            "crid": "16567",
                             "cur": "USD"
                         }
                     }
@@ -45,7 +45,7 @@
                             "adomain": ["www.connectedinteractive.com"],
                             "mimeTypes": ["application/javascript", "image/gif", "image/jpeg", "image/png", "text/html", "text/javascript", "text/plain"],
                             "iurl": "http://cdn.example.com/ad.gif",
-                            "crid": "2",
+                            "crid": "16567",
                             "cur": "USD"
                         }
                     }
@@ -59,7 +59,7 @@
             "minTimeAvailableMs": 5,
             "winFormat": "full"
         },
-        "name": "golang_http_bidder",
+        "name": "1079",
         "period": 3000,
         "price": 0.08
     }
