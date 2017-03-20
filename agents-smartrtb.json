@@ -28,7 +28,8 @@
                             "adomain": ["www.connectedinterative.com"],
                             "mimeTypes": ["application/javascript", "image/gif", "image/jpeg", "image/png", "text/html", "text/javascript", "text/plain"],
                             "iurl": "http://cdn.example.com/ad.gif",
-                            "crid": "1"
+                            "crid": "1",
+                            "cur": "USD"
                         }
                     }
                 },
@@ -44,7 +45,8 @@
                             "adomain": ["www.connectedinterative.com"],
                             "mimeTypes": ["application/javascript", "image/gif", "image/jpeg", "image/png", "text/html", "text/javascript", "text/plain"],
                             "iurl": "http://cdn.example.com/ad.gif",
-                            "crid": "2"
+                            "crid": "2",
+                            "cur": "USD"
                         }
                     }
                 },
@@ -60,7 +62,8 @@
                             "adomain": ["www.connectedinterative.com"],
                             "mimeTypes": ["application/javascript", "image/gif", "image/jpeg", "image/png", "text/html", "text/javascript", "text/plain"],
                             "iurl": "http://cdn.example.com/ad.gif",
-                            "crid": "3"
+                            "crid": "3",
+                            "cur": "USD"
                         }
                     }
                 }
