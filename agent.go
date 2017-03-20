@@ -50,7 +50,7 @@ type AgentConfig struct {
 	Creatives          []Creative       `json:"creatives"`
 	ErrorFormat        string           `json:"errorFormat"`
 	External           bool             `json:"external"`
-	ExternalId         int              `json:"externalId"`
+	ExternalID         int              `json:"externalId"`
 	LossFormat         string           `json:"lossFormat"`
 	MinTimeAvailableMs float64          `json:"minTimeAvailableMs"`
 	ProviderConfig     *json.RawMessage `json:"providerConfig"`
@@ -102,8 +102,8 @@ func (agent *Agent) RegisterAgent(httpClient *http.Client, acsIP string, acsPort
 
 // UnregisterAgent Removes the agent configuration from the ACS
 func (agent *Agent) UnregisterAgent(
-	httpClient *http.Client, acsIp string, acsPort int) {
-	url := fmt.Sprintf("http://%s:%d/v1/agents/%s/config", acsIp, acsPort, agent.Name)
+	httpClient *http.Client, acsIP string, acsPort int) {
+	url := fmt.Sprintf("http://%s:%d/v1/agents/%s/config", acsIP, acsPort, agent.Name)
 	req, _ := http.NewRequest("DELETE", url, bytes.NewBufferString(""))
 	res, err := httpClient.Do(req)
 	if err != nil {
@@ -211,7 +211,7 @@ func (agent *Agent) DoBid(
 	req *openrtb.BidRequest, res *openrtb.BidResponse, ids map[creativesKey]interface{}) (*openrtb.BidResponse, bool) {
 
 	for _, imp := range req.Imp {
-		key := creativesKey{ImpID: imp.ID, ExtID: agent.Config.ExternalId}
+		key := creativesKey{ImpID: imp.ID, ExtID: agent.Config.ExternalID}
 		if ids[key] == nil {
 			continue
 		}
@@ -227,7 +227,7 @@ func (agent *Agent) DoBid(
 
 		price := float64(imp.BidFloor * 1.25)
 
-		ext := map[string]interface{}{"priority": 1.0, "external-id": agent.Config.ExternalId}
+		ext := map[string]interface{}{"priority": 1.0, "external-id": agent.Config.ExternalID}
 		jsonExt, _ := json.Marshal(ext)
 		bid := openrtb.Bid{ID: bidID, ImpID: imp.ID, CreativeID: crid, Price: price, Ext: jsonExt}
 		agent.bidID++
@@ -248,6 +248,7 @@ func externalIdsFromRequest(req *openrtb.BidRequest) map[creativesKey]interface{
 	ids := make(map[creativesKey]interface{})
 
 	for _, imp := range req.Imp {
+		log.Print("")
 		var extJSON map[string]interface{}
 		_ = json.Unmarshal(imp.Ext, &extJSON)
 
