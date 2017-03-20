@@ -68,7 +68,7 @@ type Agent struct {
 
 	// For pacing the budgeting
 	Period  int `json:"period"`
-	Balance int `json:"balance"`
+	Balance int `json:"balance"` // In microdollars
 
 	// private state of each agent
 	registered bool      // did we register the configuration in the ACS?
