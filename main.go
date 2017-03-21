@@ -51,7 +51,7 @@ func setupHandlers(agents []Agent) {
 }
 
 func cleanup(agents []Agent) {
-	stopRedisSubscriber()
+	// stopRedisSubscriber()
 	// Implement remove agent from ACS
 	shutDownAgents(agents)
 	fmt.Println("Leaving...")
@@ -84,9 +84,9 @@ func main() {
 		log.Fatal("You should provide a configuration file.")
 	}
 
-	setupClient()
-	go startRedisSubscriber()
-	wg.Add(1)
+	// setupClient()
+	// go startRedisSubscriber()
+	// wg.Add(1)
 
 	printPortConfigs()
 
