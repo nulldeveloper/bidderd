@@ -1,8 +1,9 @@
-package main
+package RedisHandler
 
 import (
 	"log"
 
+	"github.com/connectedinteractive/bidderd/agent"
 	redis "gopkg.in/redis.v5"
 )
 
@@ -54,7 +55,7 @@ func stopRedisSubscriber() {
 func updateConfiguration(msg *redis.Message) {
 	log.Println("the message is", msg.Payload)
 
-	agents, err := loadAgentsFromString(msg.Payload)
+	agents, err := BiddingAgent.LoadAgentsFromString(msg.Payload)
 
 	if err != nil {
 		log.Fatal("Bad json configuration, sucka!!!!!!")

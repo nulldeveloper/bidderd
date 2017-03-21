@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"sync"
 
+	"github.com/connectedinteractive/bidderd/agent"
 	"github.com/valyala/fasthttp"
 )
 
@@ -25,7 +26,7 @@ const (
 
 var bidderPort int
 var wg sync.WaitGroup
-var _agents []Agent
+var _agents []BiddingAgent.Agent
 
 // http client to pace agents (note that it's pointer)
 var client = &http.Client{}
@@ -36,7 +37,7 @@ func printPortConfigs() {
 	log.Printf("Event port: %d", BidderEvent)
 }
 
-func setupHandlers(agents []Agent) {
+func setupHandlers(agents []BiddingAgent.Agent) {
 	m := func(ctx *fasthttp.RequestCtx) {
 		switch string(ctx.Path()) {
 		case "/auctions":
@@ -50,17 +51,17 @@ func setupHandlers(agents []Agent) {
 	log.Println("Started Bid Mux")
 }
 
-func cleanup(agents []Agent) {
+func cleanup(agents []BiddingAgent.Agent) {
 	// stopRedisSubscriber()
 	// Implement remove agent from ACS
 	shutDownAgents(agents)
 	fmt.Println("Leaving...")
-	for {
+	for i := 0; i < 3; i++ {
 		wg.Done()
 	}
 }
 
-func startAgents(agents []Agent) {
+func startAgents(agents []BiddingAgent.Agent) {
 	log.Printf("Starting Up %d Agents", len(agents))
 	for _, agent := range agents {
 		agent.RegisterAgent(client, ACSIP, ACSPort)
@@ -68,7 +69,7 @@ func startAgents(agents []Agent) {
 	}
 }
 
-func shutDownAgents(agents []Agent) {
+func shutDownAgents(agents []BiddingAgent.Agent) {
 	log.Println("Shutting Down Agents")
 	for _, agent := range agents {
 		agent.UnregisterAgent(client, ACSIP, ACSPort)
@@ -91,7 +92,7 @@ func main() {
 	printPortConfigs()
 
 	// load configuration
-	_agents, err := LoadAgentsFromFile(*agentsConfigFile)
+	_agents, err := BiddingAgent.LoadAgentsFromFile(*agentsConfigFile)
 
 	if err != nil {
 		log.Fatal(err)
@@ -99,7 +100,7 @@ func main() {
 
 	startAgents(_agents)
 
-	StartStatOutput()
+	BiddingAgent.StartStatOutput()
 	setupHandlers(_agents)
 
 	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderEvent), eventMux)
