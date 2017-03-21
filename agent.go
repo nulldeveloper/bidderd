@@ -114,6 +114,18 @@ func (agent *Agent) UnregisterAgent(
 	res.Body.Close()
 }
 
+func pace(httpClient *http.Client, url string, body string) {
+	log.Println("Pacing...")
+	req, _ := http.NewRequest("POST", url, strings.NewReader(body))
+	req.Header.Add("Accept", "application/json")
+	res, err := httpClient.Do(req)
+	if err != nil {
+		log.Printf("Balance failed with %s\n", err)
+		return
+	}
+	res.Body.Close()
+}
+
 // StartPacer Starts a go routine which periodically updates the balance on the agents account.
 func (agent *Agent) StartPacer(
 	httpClient *http.Client, bankerIP string, bankerPort int) {
@@ -126,22 +138,15 @@ func (agent *Agent) StartPacer(
 	ticker := time.NewTicker(time.Duration(agent.Period) * time.Millisecond)
 	agent.pacer = make(chan bool)
 
+	// Pace at the start
+	go pace(httpClient, url, body)
+
 	go func() {
 		for {
 			select {
 			case <-ticker.C:
 				// make this a new go routine?
-				go func() {
-					log.Println("Pacing...")
-					req, _ := http.NewRequest("POST", url, strings.NewReader(body))
-					req.Header.Add("Accept", "application/json")
-					res, err := httpClient.Do(req)
-					if err != nil {
-						log.Printf("Balance failed with %s\n", err)
-						return
-					}
-					res.Body.Close()
-				}()
+				go pace(httpClient, url, body)
 			case <-agent.pacer:
 				ticker.Stop()
 				return

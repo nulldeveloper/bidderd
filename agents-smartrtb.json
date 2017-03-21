@@ -60,7 +60,7 @@
             "winFormat": "full"
         },
         "name": "1079",
-        "period": 3000,
-        "price": 0.08
+        "period": 300000,
+        "price": 1.50
     }
 ]
