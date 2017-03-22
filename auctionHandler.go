@@ -30,12 +30,6 @@ func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []Agent) {
 		return
 	}
 
-	if req.Test == 1 {
-		log.Println("the test is true")
-	} else {
-		log.Println("test is not true", req.Test)
-	}
-
 	// log.Println("INFO Received bid request", req.ID)
 
 	ids := externalIdsFromRequest(req)

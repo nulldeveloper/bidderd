@@ -254,7 +254,9 @@ func (agent *Agent) DoBid(
 
 		bidID := strconv.Itoa(agent.bidID)
 
-		price := randomPrice(0.25, 1.50)
+		price := randomPrice(0.25, 1.75)
+
+		log.Println("The price bid is: ", price)
 
 		ext := map[string]interface{}{"priority": 1.0, "external-id": agent.Config.ExternalID}
 		jsonExt, _ := json.Marshal(ext)
