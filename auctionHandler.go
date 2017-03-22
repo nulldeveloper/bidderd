@@ -50,6 +50,8 @@ func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []Agent) {
 		bytes, _ := json.Marshal(res)
 		ctx.SetBody(bytes)
 
+		print(string(bytes))
+
 		return
 	}
 	log.Println("No bid.")
