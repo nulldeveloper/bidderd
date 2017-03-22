@@ -254,7 +254,7 @@ func (agent *Agent) DoBid(
 
 		bidID := strconv.Itoa(agent.bidID)
 
-		price := randomPrice(0.25, 1.75)
+		price := randomPrice(0.25, 2.25)
 
 		log.Println("The price bid is: ", price)
 

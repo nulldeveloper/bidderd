@@ -15,8 +15,6 @@ func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []Agent) {
 		tmpOk = true
 	)
 
-	log.Println("Got a bid!!")
-
 	// enc := json.NewEncoder(w)
 	// body, _ := ioutil.ReadAll(r.Body)
 	// fmt.Println(string(body))
