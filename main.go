@@ -55,7 +55,7 @@ func cleanup(agents []Agent) {
 	// Implement remove agent from ACS
 	shutDownAgents(agents)
 	fmt.Println("Leaving...")
-	for {
+	for i := 0; i < 3; i++ {
 		wg.Done()
 	}
 }

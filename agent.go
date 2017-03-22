@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -208,6 +209,29 @@ func (agent *Agent) StopPacer() {
 	close(agent.pacer)
 }
 
+func round(f float64) float64 {
+	return math.Floor(f + .5)
+}
+
+func random(min, max int) int {
+	rand.Seed(time.Now().Unix())
+	return rand.Intn(max-min) + min
+}
+
+func randomPrice(percentage float64, mainPrice float64) float64 {
+	rm := round(mainPrice * 100)
+
+	diff := (rm * percentage)
+
+	low := int(rm - diff)
+	high := int(rm + diff)
+
+	randDec := random(low, high)
+	decimal := float64(randDec) / 100.0
+
+	return decimal
+}
+
 // DoBid Adds to the bid response the bid by the agent. The Bid is added to
 // the only seat of the response. It picks a random creative from
 // the list of creatives from the `Agent.Config.Creative` and places it
@@ -230,7 +254,7 @@ func (agent *Agent) DoBid(
 
 		bidID := strconv.Itoa(agent.bidID)
 
-		price := float64(imp.BidFloor * 1.25)
+		price := randomPrice(0.25, 1.50)
 
 		ext := map[string]interface{}{"priority": 1.0, "external-id": agent.Config.ExternalID}
 		jsonExt, _ := json.Marshal(ext)
