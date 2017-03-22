@@ -219,9 +219,9 @@ func random(min, max int) int {
 }
 
 func randomPrice(percentage float64, mainPrice float64) float64 {
-	rm := round(mainPrice * 100)
+	rm := (mainPrice * 100)
 
-	diff := (rm * percentage)
+	diff := round(rm * percentage)
 
 	low := int(rm - diff)
 	high := int(rm + diff)
