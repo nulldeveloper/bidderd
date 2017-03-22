@@ -1,4 +1,4 @@
-package BiddingAgent
+package agent
 
 import (
 	"bytes"

@@ -1,4 +1,4 @@
-package BiddingAgent
+package agent
 
 import (
 	"bytes"
@@ -181,7 +181,7 @@ func BidEvent() {
 }
 
 // BidIncoming ...
-func BidIncoming() {
+func (a *Agent) BidIncoming() {
 	Bids++
 }
 
@@ -228,7 +228,8 @@ func (agent *Agent) DoBid(req *openrtb.BidRequest, res *openrtb.BidResponse, ids
 
 		bidID := strconv.Itoa(agent.bidID)
 
-		price := float64(imp.BidFloor * 1.25)
+		rp := randomPrice{percentage: 0.25, price: 1.25}
+		price := rp.randomPrice()
 
 		ext := map[string]interface{}{"priority": 1.0, "external-id": agent.Config.ExternalID}
 		jsonExt, _ := json.Marshal(ext)

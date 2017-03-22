@@ -26,7 +26,7 @@ const (
 
 var bidderPort int
 var wg sync.WaitGroup
-var _agents []BiddingAgent.Agent
+var _agents []agent.Agent
 
 // http client to pace agents (note that it's pointer)
 var client = &http.Client{}
@@ -37,7 +37,7 @@ func printPortConfigs() {
 	log.Printf("Event port: %d", BidderEvent)
 }
 
-func setupHandlers(agents []BiddingAgent.Agent) {
+func setupHandlers(agents []agent.Agent) {
 	m := func(ctx *fasthttp.RequestCtx) {
 		switch string(ctx.Path()) {
 		case "/auctions":
@@ -51,7 +51,7 @@ func setupHandlers(agents []BiddingAgent.Agent) {
 	log.Println("Started Bid Mux")
 }
 
-func cleanup(agents []BiddingAgent.Agent) {
+func cleanup(agents []agent.Agent) {
 	// stopRedisSubscriber()
 	// Implement remove agent from ACS
 	shutDownAgents(agents)
@@ -61,7 +61,7 @@ func cleanup(agents []BiddingAgent.Agent) {
 	}
 }
 
-func startAgents(agents []BiddingAgent.Agent) {
+func startAgents(agents []agent.Agent) {
 	log.Printf("Starting Up %d Agents", len(agents))
 	for _, agent := range agents {
 		agent.RegisterAgent(client, ACSIP, ACSPort)
@@ -69,7 +69,7 @@ func startAgents(agents []BiddingAgent.Agent) {
 	}
 }
 
-func shutDownAgents(agents []BiddingAgent.Agent) {
+func shutDownAgents(agents []agent.Agent) {
 	log.Println("Shutting Down Agents")
 	for _, agent := range agents {
 		agent.UnregisterAgent(client, ACSIP, ACSPort)
@@ -92,15 +92,15 @@ func main() {
 	printPortConfigs()
 
 	// load configuration
-	_agents, err := BiddingAgent.LoadAgentsFromFile(*agentsConfigFile)
+	// _agents, err := agent.LoadAgentsFromFile(*agentsConfigFile)
 
-	if err != nil {
-		log.Fatal(err)
-	}
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
 	startAgents(_agents)
 
-	BiddingAgent.StartStatOutput()
+	agent.StartStatOutput()
 	setupHandlers(_agents)
 
 	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderEvent), eventMux)

@@ -13,7 +13,7 @@ import (
 
 var openRTBVersion = "2.2"
 
-func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []BiddingAgent.Agent) {
+func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []agent.Agent) {
 	var (
 		ok    = true
 		tmpOk = true
@@ -42,15 +42,15 @@ func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []BiddingAgent.Agent) {
 
 	// log.Println("INFO Received bid request", req.ID)
 
-	ids := BiddingAgent.ExternalIdsFromRequest(req)
-	res := BiddingAgent.EmptyResponseWithOneSeat(req)
+	ids := agent.ExternalIdsFromRequest(req)
+	res := agent.EmptyResponseWithOneSeat(req)
 
 	for _, agent := range agents {
 		res, tmpOk = agent.DoBid(req, res, ids)
 		ok = tmpOk || ok
 
 		if tmpOk {
-			BiddingAgent.BidIncoming()
+			agent.BidIncoming()
 		}
 	}
 
@@ -81,13 +81,13 @@ func errorMux(ctx *fasthttp.RequestCtx) {
 	// }
 
 	ctx.SetStatusCode(http.StatusOK)
-	BiddingAgent.BidEvent()
+	agent.BidEvent()
 }
 
 func winMux(ctx *fasthttp.RequestCtx) {
 	// log.Println(ctx.PostBody())
 	ctx.SetStatusCode(fasthttp.StatusOK)
-	BiddingAgent.BidWin()
+	agent.BidWin()
 }
 
 func eventMux(ctx *fasthttp.RequestCtx) {
@@ -107,5 +107,5 @@ func eventMux(ctx *fasthttp.RequestCtx) {
 
 	log.Println("Event!!!!!")
 	ctx.SetStatusCode(http.StatusOK)
-	BiddingAgent.BidEvent()
+	agent.BidEvent()
 }
