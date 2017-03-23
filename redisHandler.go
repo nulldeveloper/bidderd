@@ -1,9 +1,8 @@
-package RedisHandler
+package main
 
 import (
 	"log"
 
-	"github.com/connectedinteractive/bidderd/agent"
 	redis "gopkg.in/redis.v5"
 )
 
@@ -12,17 +11,20 @@ const channel = "Test"
 var redisClient *redis.Client
 var subscriber *redis.PubSub
 
-func setupClient() {
+type redisHandler struct {
+}
+
+func (rh *redisHandler) setupClient() {
 	redisClient = redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
 	log.Println("Setting up client")
-	subscribe()
+	rh.subscribe()
 }
 
-func subscribe() {
+func (rh *redisHandler) subscribe() {
 	log.Println("Starting subscriber")
 
 	var err error
@@ -33,7 +35,7 @@ func subscribe() {
 	}
 }
 
-func startRedisSubscriber() {
+func (rh *redisHandler) startRedisSubscriber() {
 	log.Println("Waiting for Configuration Changes")
 	for {
 		msg, err := subscriber.ReceiveMessage()
@@ -41,27 +43,27 @@ func startRedisSubscriber() {
 		if err != nil {
 			log.Println("error recieving message")
 		} else {
-			updateConfiguration(msg)
+			rh.updateConfiguration(msg)
 		}
 	}
 }
 
-func stopRedisSubscriber() {
+func (rh *redisHandler) stopRedisSubscriber() {
 	subscriber.Close()
 	subscriber.Unsubscribe(channel)
 	redisClient.Close()
 }
 
-func updateConfiguration(msg *redis.Message) {
+func (rh *redisHandler) updateConfiguration(msg *redis.Message) {
 	log.Println("the message is", msg.Payload)
 
-	agents, err := BiddingAgent.LoadAgentsFromString(msg.Payload)
+	// agents, err := BiddingAgent.LoadAgentsFromString(msg.Payload)
 
-	if err != nil {
-		log.Fatal("Bad json configuration, sucka!!!!!!")
-	}
+	// if err != nil {
+	// 	log.Fatal("Bad json configuration, sucka!!!!!!")
+	// }
 
-	shutDownAgents(_agents)
-	_agents = agents
-	startAgents(_agents)
+	// shutDownAgents(_agents)
+	// _agents = agents
+	// startAgents(_agents)
 }

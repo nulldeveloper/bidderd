@@ -1,15 +1,15 @@
-package agentFactory
+package main
 
 import (
 	"encoding/json"
 	"io/ioutil"
 )
 
-type Factory struct {
+type agentFactory struct {
 	Agents []Agent
 }
 
-func loadAgents(data []byte) ([]Agent, error) {
+func (af *agentFactory) loadAgents(data []byte) ([]Agent, error) {
 	type Agents []Agent
 	var agents Agents
 
@@ -21,15 +21,15 @@ func loadAgents(data []byte) ([]Agent, error) {
 }
 
 // LoadAgentsFromFile Parse a JSON file and return a list of Agents.
-func (factory *Factory) LoadAgentsFromFile(filepath string) ([]Agent, error) {
+func (af *agentFactory) LoadAgentsFromFile(filepath string) ([]Agent, error) {
 	data, err := ioutil.ReadFile(filepath)
 	if err != nil {
 		return nil, err
 	}
-	return loadAgents(data)
+	return af.loadAgents(data)
 }
 
 // LoadAgentsFromString ...
-func LoadAgentsFromString(agentsString string) ([]Agent, error) {
-	return loadAgents([]byte(agentsString))
+func (af *agentFactory) LoadAgentsFromString(agentsString string) ([]Agent, error) {
+	return af.loadAgents([]byte(agentsString))
 }

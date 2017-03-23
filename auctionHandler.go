@@ -5,15 +5,15 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/connectedinteractive/bidderd/agent"
 	"github.com/valyala/fasthttp"
 
 	openrtb "gopkg.in/bsm/openrtb.v2"
 )
 
 var openRTBVersion = "2.2"
+var l = logger{}
 
-func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []agent.Agent) {
+func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []Agent) {
 	var (
 		ok    = true
 		tmpOk = true
@@ -42,8 +42,8 @@ func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []agent.Agent) {
 
 	// log.Println("INFO Received bid request", req.ID)
 
-	ids := agent.ExternalIdsFromRequest(req)
-	res := agent.EmptyResponseWithOneSeat(req)
+	ids := ExternalIdsFromRequest(req)
+	res := EmptyResponseWithOneSeat(req)
 
 	for _, agent := range agents {
 		res, tmpOk = agent.DoBid(req, res, ids)
@@ -55,6 +55,9 @@ func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []agent.Agent) {
 	}
 
 	if ok {
+		ld := logData{AuctionData: req, BidData: res}
+		go l.log(ld)
+
 		ctx.Response.Header.Set("Content-type", "application/json")
 		ctx.Response.Header.Set("x-openrtb-version", openRTBVersion)
 		ctx.SetStatusCode(http.StatusOK)
@@ -81,13 +84,13 @@ func errorMux(ctx *fasthttp.RequestCtx) {
 	// }
 
 	ctx.SetStatusCode(http.StatusOK)
-	agent.BidEvent()
+	BidEvent()
 }
 
 func winMux(ctx *fasthttp.RequestCtx) {
 	// log.Println(ctx.PostBody())
 	ctx.SetStatusCode(fasthttp.StatusOK)
-	agent.BidWin()
+	BidWin()
 }
 
 func eventMux(ctx *fasthttp.RequestCtx) {
@@ -107,5 +110,5 @@ func eventMux(ctx *fasthttp.RequestCtx) {
 
 	log.Println("Event!!!!!")
 	ctx.SetStatusCode(http.StatusOK)
-	agent.BidEvent()
+	BidEvent()
 }
