@@ -23,7 +23,7 @@
                     "providerConfig": {
                         "smartrtb":{
                             "adm": "<a href='https://ads.connectedinteractive.com/ban/click/connec12529' target='_self'><img src='http://d3htn85c6cao65.cloudfront.net/creatives/v2/258/1489779111/banner.jpg' border='0'></a><img style='position:absolute; left: -10000px;' width='1' height='1' src='https://rdr.connectedinteractive.com/ngage/imp/connec12529'>",
-                            "nurl": "http://ec2-52-14-45-200.us-east-2.compute.amazonaws.com:3000/creatives/1/record_win?auction_id=${AUCTION_ID}&impression_id=${AUCTION_IMP_ID}&price=${AUCTION_PRICE}",
+                            "nurl": "http://34.203.205.99:3000/creatives/1/record_win?auction_id=${AUCTION_ID}&impression_id=${AUCTION_IMP_ID}&price=${AUCTION_PRICE}",
                             "adid": "1",
                             "adomain": ["www.connectedinteractive.com"],
                             "mimeTypes": ["image/jpeg", "text/html", "text/plain"],
@@ -40,7 +40,7 @@
                     "providerConfig": {
                         "smartrtb":{
                             "adm": "<a href='https: //ads.connectedinteractive.com/ban/click/connec27665' target='_self'><img src='http://d3htn85c6cao65.cloudfront.net/creatives/v2/258/1489781207/banner.jpg' border='0'></a><img style='position:absolute; left: -10000px;' width='1' height='1' src='https://rdr.connectedinteractive.com/ngage/imp/connec27665'>",
-                            "nurl": "http://ec2-52-14-45-200.us-east-2.compute.amazonaws.com:3000/creatives/2/record_win?auction_id=${AUCTION_ID}&impression_id=${AUCTION_IMP_ID}&price=${AUCTION_PRICE}",
+                            "nurl": "http://34.203.205.99:3000/creatives/2/record_win?auction_id=${AUCTION_ID}&impression_id=${AUCTION_IMP_ID}&price=${AUCTION_PRICE}",
                             "adid": "2",
                             "adomain": ["www.connectedinteractive.com"],
                             "mimeTypes": ["image/jpeg", "text/html", "text/plain"],
