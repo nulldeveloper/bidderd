@@ -61,6 +61,7 @@
         },
         "name": "1079",
         "period": 300000,
-        "price": 1.50
+        "price": 1.50,
+        "percentage": 0.25
     }
 ]

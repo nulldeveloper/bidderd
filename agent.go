@@ -64,7 +64,8 @@ type Agent struct {
 	Config AgentConfig `json:"config"`
 
 	// This is the price the agent will pay per impression. "Fixed price bidder".
-	Price float64 `json:"price"`
+	Price      float64 `json:"price"`
+	Percentage float64 `json:"percentage"`
 
 	// For pacing the budgeting
 	Period  int `json:"period"`
@@ -228,7 +229,7 @@ func (agent *Agent) DoBid(req *openrtb.BidRequest, res *openrtb.BidResponse, ids
 
 		bidID := strconv.Itoa(agent.bidID)
 
-		rp := randomPrice{percentage: 0.25, price: 1.25}
+		rp := randomPrice{percentage: agent.Percentage, price: agent.Price}
 		price := rp.randomPrice()
 
 		ext := map[string]interface{}{"priority": 1.0, "external-id": agent.Config.ExternalID}
