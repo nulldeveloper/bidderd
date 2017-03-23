@@ -47,8 +47,8 @@ func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []Agent) {
 	}
 
 	if ok {
-		ld := logData{AuctionData: req, BidData: res}
-		go l.log(ld)
+		// ld := logData{AuctionData: req, BidData: res}
+		// go l.log(ld)
 
 		ctx.Response.Header.Set("Content-type", "application/json")
 		ctx.Response.Header.Set("x-openrtb-version", openRTBVersion)
