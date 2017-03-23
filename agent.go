@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"math"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -69,7 +68,7 @@ type Agent struct {
 
 	// For pacing the budgeting
 	Period  int `json:"period"`
-	Balance int `json:"balance"` // In microdollars
+	Balance int `json:"balance"`
 
 	// private state of each agent
 	registered bool      // did we register the configuration in the ACS?
@@ -77,10 +76,10 @@ type Agent struct {
 	bidID      int       // unique id for response
 }
 
-type creativesKey struct {
-	// This is used to make a mapping between an impression and the
-	// external-id of an agent to the creatives that can be sent to the
-	// exchange for that impression.
+// CreativesKey This is used to make a mapping between an impression and the
+// external-id of an agent to the creatives that can be sent to the
+// exchange for that impression.
+type CreativesKey struct {
 	ImpID string
 	ExtID int
 }
@@ -102,8 +101,7 @@ func (agent *Agent) RegisterAgent(httpClient *http.Client, acsIP string, acsPort
 }
 
 // UnregisterAgent Removes the agent configuration from the ACS
-func (agent *Agent) UnregisterAgent(
-	httpClient *http.Client, acsIP string, acsPort int) {
+func (agent *Agent) UnregisterAgent(httpClient *http.Client, acsIP string, acsPort int) {
 	url := fmt.Sprintf("http://%s:%d/v1/agents/%s/config", acsIP, acsPort, agent.Name)
 	req, _ := http.NewRequest("DELETE", url, bytes.NewBufferString(""))
 	res, err := httpClient.Do(req)
@@ -139,7 +137,7 @@ func (agent *Agent) StartPacer(
 	ticker := time.NewTicker(time.Duration(agent.Period) * time.Millisecond)
 	agent.pacer = make(chan bool)
 
-	// Pace at the start
+	//Run pacer on startup
 	go pace(httpClient, url, body)
 
 	go func() {
@@ -183,7 +181,7 @@ func BidEvent() {
 }
 
 // BidIncoming ...
-func BidIncoming() {
+func (a *Agent) BidIncoming() {
 	Bids++
 }
 
@@ -209,38 +207,14 @@ func (agent *Agent) StopPacer() {
 	close(agent.pacer)
 }
 
-func round(f float64) float64 {
-	return math.Floor(f + .5)
-}
-
-func random(min, max int) int {
-	rand.Seed(time.Now().Unix())
-	return rand.Intn(max-min) + min
-}
-
-func randomPrice(percentage float64, mainPrice float64) float64 {
-	rm := (mainPrice * 100)
-
-	diff := round(rm * percentage)
-
-	low := int(rm - diff)
-	high := int(rm + diff)
-
-	randDec := random(low, high)
-	decimal := float64(randDec) / 100.0
-
-	return decimal
-}
-
 // DoBid Adds to the bid response the bid by the agent. The Bid is added to
 // the only seat of the response. It picks a random creative from
 // the list of creatives from the `Agent.Config.Creative` and places it
 // in the bid.
-func (agent *Agent) DoBid(
-	req *openrtb.BidRequest, res *openrtb.BidResponse, ids map[creativesKey]interface{}) (*openrtb.BidResponse, bool) {
+func (agent *Agent) DoBid(req *openrtb.BidRequest, res *openrtb.BidResponse, ids map[CreativesKey]interface{}) (*openrtb.BidResponse, bool) {
 
 	for _, imp := range req.Imp {
-		key := creativesKey{ImpID: imp.ID, ExtID: agent.Config.ExternalID}
+		key := CreativesKey{ImpID: imp.ID, ExtID: agent.Config.ExternalID}
 		if ids[key] == nil {
 			continue
 		}
@@ -254,9 +228,8 @@ func (agent *Agent) DoBid(
 
 		bidID := strconv.Itoa(agent.bidID)
 
-		price := randomPrice(0.25, 50.00)
-
-		log.Println("The price bid is: ", price)
+		rp := randomPrice{percentage: 0.25, price: 1.25}
+		price := rp.randomPrice()
 
 		ext := map[string]interface{}{"priority": 1.0, "external-id": agent.Config.ExternalID}
 		jsonExt, _ := json.Marshal(ext)
@@ -271,12 +244,12 @@ func (agent *Agent) DoBid(
 	return res, len(res.SeatBid[0].Bid) > 0
 }
 
-func externalIdsFromRequest(req *openrtb.BidRequest) map[creativesKey]interface{} {
-	// This function makes a mappping with a range of type (Impression Id, External Id)
-	// to a slice of "creative indexes" (See the agent configuration "creative").
-	// We use this auxiliary function in `DoBid` to match the `BidRequest` to the
-	// creatives of the agent and create a response.
-	ids := make(map[creativesKey]interface{})
+// ExternalIdsFromRequest makes a mappping with a range of type (Impression Id, External Id)
+// to a slice of "creative indexes" (See the agent configuration "creative").
+// We use this auxiliary function in `DoBid` to match the `BidRequest` to the
+// creatives of the agent and create a response.
+func ExternalIdsFromRequest(req *openrtb.BidRequest) map[CreativesKey]interface{} {
+	ids := make(map[CreativesKey]interface{})
 
 	for _, imp := range req.Imp {
 		log.Print("")
@@ -285,7 +258,7 @@ func externalIdsFromRequest(req *openrtb.BidRequest) map[creativesKey]interface{
 
 		for _, extID := range extJSON["external-ids"].([]interface{}) {
 			extID = int(extID.(float64))
-			key := creativesKey{ImpID: imp.ID, ExtID: extID.(int)}
+			key := CreativesKey{ImpID: imp.ID, ExtID: extID.(int)}
 			creatives := (extJSON["creative-ids"].(map[string]interface{}))[strconv.Itoa(extID.(int))]
 			ids[key] = creatives.(interface{})
 		}
@@ -293,9 +266,9 @@ func externalIdsFromRequest(req *openrtb.BidRequest) map[creativesKey]interface{
 	return ids
 }
 
-func emptyResponseWithOneSeat(req *openrtb.BidRequest) *openrtb.BidResponse {
-	// This function adds a Seat to the Response.
-	// Seat: A buyer entity that uses a Bidder to obtain impressions on its behalf.
+// EmptyResponseWithOneSeat adds a Seat to the Response.
+// Seat: A buyer entity that uses a Bidder to obtain impressions on its behalf.
+func EmptyResponseWithOneSeat(req *openrtb.BidRequest) *openrtb.BidResponse {
 	seat := openrtb.SeatBid{Bid: make([]openrtb.Bid, 0)}
 	seatbid := []openrtb.SeatBid{seat}
 	res := &openrtb.BidResponse{ID: req.ID, SeatBid: seatbid}
@@ -314,30 +287,6 @@ func LoadAgent(filepath string) (Agent, error) {
 		return Agent{}, err
 	}
 	return agent, nil
-}
-
-func loadAgents(data []byte) ([]Agent, error) {
-	type Agents []Agent
-	var agents Agents
-
-	err := json.Unmarshal(data, &agents)
-	if err != nil {
-		return nil, err
-	}
-	return agents, nil
-}
-
-// LoadAgentsFromFile Parse a JSON file and return a list of Agents.
-func LoadAgentsFromFile(filepath string) ([]Agent, error) {
-	data, err := ioutil.ReadFile(filepath)
-	if err != nil {
-		return nil, err
-	}
-	return loadAgents(data)
-}
-
-func loadAgentsFromString(agentsString string) ([]Agent, error) {
-	return loadAgents([]byte(agentsString))
 }
 
 // FindCreativeIndexFromID takes a creative ID and an AgentConfig,

@@ -23,9 +23,11 @@ const (
 	BiddingPort = 7654
 )
 
+type agents []Agent
+
 var bidderPort int
 var wg sync.WaitGroup
-var _agents []Agent
+var _agents agents
 
 // http client to pace agents (note that it's pointer)
 var client = &http.Client{}
@@ -36,7 +38,7 @@ func printPortConfigs() {
 	log.Printf("Event port: %d", BidderEvent)
 }
 
-func setupHandlers(agents []Agent) {
+func setupHandlers(agents agents) {
 	m := func(ctx *fasthttp.RequestCtx) {
 		switch string(ctx.Path()) {
 		case "/auctions":
@@ -50,7 +52,7 @@ func setupHandlers(agents []Agent) {
 	log.Println("Started Bid Mux")
 }
 
-func cleanup(agents []Agent) {
+func cleanup(agents agents) {
 	// stopRedisSubscriber()
 	// Implement remove agent from ACS
 	shutDownAgents(agents)
@@ -60,7 +62,7 @@ func cleanup(agents []Agent) {
 	}
 }
 
-func startAgents(agents []Agent) {
+func startAgents(agents agents) {
 	log.Printf("Starting Up %d Agents", len(agents))
 	for _, agent := range agents {
 		agent.RegisterAgent(client, ACSIP, ACSPort)
@@ -68,7 +70,7 @@ func startAgents(agents []Agent) {
 	}
 }
 
-func shutDownAgents(agents []Agent) {
+func shutDownAgents(agents agents) {
 	log.Println("Shutting Down Agents")
 	for _, agent := range agents {
 		agent.UnregisterAgent(client, ACSIP, ACSPort)
@@ -76,7 +78,7 @@ func shutDownAgents(agents []Agent) {
 }
 
 func main() {
-	var agentsConfigFile = flag.String("config", "agents.json", "Configuration file in JSON.")
+	var agentsConfigFile = flag.String("config", "agents-smartrtb.json", "Configuration file in JSON.")
 	flag.IntVar(&bidderPort, "port", BiddingPort, "Port to listen on for router")
 	flag.Parse()
 
@@ -91,7 +93,8 @@ func main() {
 	printPortConfigs()
 
 	// load configuration
-	_agents, err := LoadAgentsFromFile(*agentsConfigFile)
+	af := agentFactory{}
+	_agents, err := af.LoadAgentsFromFile(*agentsConfigFile)
 
 	if err != nil {
 		log.Fatal(err)

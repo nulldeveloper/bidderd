@@ -6,8 +6,12 @@ import (
 	"net/http"
 
 	"github.com/valyala/fasthttp"
+
 	openrtb "gopkg.in/bsm/openrtb.v2"
 )
+
+var openRTBVersion = "2.2"
+var l = logger{}
 
 func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []Agent) {
 	var (
@@ -30,21 +34,24 @@ func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []Agent) {
 
 	// log.Println("INFO Received bid request", req.ID)
 
-	ids := externalIdsFromRequest(req)
-	res := emptyResponseWithOneSeat(req)
+	ids := ExternalIdsFromRequest(req)
+	res := EmptyResponseWithOneSeat(req)
 
 	for _, agent := range agents {
 		res, tmpOk = agent.DoBid(req, res, ids)
 		ok = tmpOk || ok
 
 		if tmpOk {
-			BidIncoming()
+			agent.BidIncoming()
 		}
 	}
 
 	if ok {
+		ld := logData{AuctionData: req, BidData: res}
+		go l.log(ld)
+
 		ctx.Response.Header.Set("Content-type", "application/json")
-		ctx.Response.Header.Set("x-openrtb-version", "2.2")
+		ctx.Response.Header.Set("x-openrtb-version", openRTBVersion)
 		ctx.SetStatusCode(http.StatusOK)
 
 		bytes, _ := json.Marshal(res)
