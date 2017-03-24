@@ -48,8 +48,8 @@ func (rh *redisHandler) startRedisSubscriber() {
 }
 
 func (rh *redisHandler) stopRedisSubscriber() {
-	rh.subscriber.Close()
 	rh.subscriber.Unsubscribe(rh.channel)
+	rh.subscriber.Close()
 	rh.client.Close()
 }
 
@@ -59,10 +59,8 @@ func (rh *redisHandler) updateConfiguration(msg *redis.Message) {
 	agents, err := af.loadAgentsFromString(msg.Payload)
 
 	if err != nil {
-		log.Fatal("Bad json configuration, sucka!!!!!!")
+		log.Println("Bad json configuration, sucka!!!!!!")
+	} else {
+		af.setAgents(agents)
 	}
-
-	af.shutDownAgents()
-	af.Agents = agents
-	af.startAgents()
 }

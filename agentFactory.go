@@ -7,42 +7,44 @@ import (
 )
 
 type agentFactory struct {
-	Agents agents
+	Agent Agent
 }
 
-func (af *agentFactory) loadAgents(data []byte) ([]Agent, error) {
-	var a agents
+func (af *agentFactory) setAgents(a Agent) {
+	af.shutDownAgents()
+	af.Agent = a
+	af.startAgents()
+}
+
+func (af *agentFactory) loadAgent(data []byte) (*Agent, error) {
+	var a Agent
 
 	err := json.Unmarshal(data, &a)
 	if err != nil {
 		return nil, err
 	}
-	return a, nil
+	return &a, nil
 }
 
-func (af *agentFactory) loadAgentsFromFile(filepath string) (agents, error) {
+func (af *agentFactory) loadAgentsFromFile(filepath string) (*Agent, error) {
 	data, err := ioutil.ReadFile(filepath)
 	if err != nil {
 		return nil, err
 	}
-	return af.loadAgents(data)
+	return af.loadAgent(data)
 }
 
-func (af *agentFactory) loadAgentsFromString(agentsString string) (agents, error) {
-	return af.loadAgents([]byte(agentsString))
+func (af *agentFactory) loadAgentsFromString(agentsString string) (*Agent, error) {
+	return af.loadAgent([]byte(agentsString))
 }
 
 func (af *agentFactory) startAgents() {
 	log.Printf("Starting Up %d Agents", len(af.Agents))
-	for _, agent := range af.Agents {
-		agent.RegisterAgent(client, ACSIP, ACSPort)
-		agent.StartPacer(client, BankerIP, BankerPort)
-	}
+	af.Agent.RegisterAgent(client, ACSIP, ACSPort)
+	af.Agent.StartPacer(client, BankerIP, BankerPort)
 }
 
 func (af *agentFactory) shutDownAgents() {
 	log.Println("Shutting Down Agents")
-	for _, agent := range af.Agents {
-		agent.UnregisterAgent(client, ACSIP, ACSPort)
-	}
+	af.Agent.UnregisterAgent(client, ACSIP, ACSPort)
 }

@@ -23,13 +23,12 @@ const (
 	BiddingPort = 7654
 )
 
-type agents []Agent
-
 var bidderPort int
 var wg sync.WaitGroup
 
 var af = agentFactory{}
 var s = newStats()
+var rh = newRedis()
 
 // http client to pace agents (note that it's pointer)
 var client = &http.Client{}
@@ -55,7 +54,7 @@ func setupHandlers(agents agents) {
 }
 
 func cleanup(agents agents) {
-	// stopRedisSubscriber()
+	rh.stopRedisSubscriber()
 	// Implement remove agent from ACS
 	af.shutDownAgents()
 	fmt.Println("Leaving...")
@@ -73,21 +72,20 @@ func main() {
 		log.Fatal("You should provide a configuration file.")
 	}
 
-	// setupClient()
-	// go startRedisSubscriber()
-	// wg.Add(1)
+	rh.subscribe()
+	go rh.startRedisSubscriber()
+	wg.Add(1)
 
 	printPortConfigs()
 
 	// load configuration
 	_agents, err := af.loadAgentsFromFile(*agentsConfigFile)
-	af.Agents = _agents
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	af.startAgents()
+	af.setAgents(_agents)
 
 	StartStatOutput()
 	setupHandlers(_agents)
