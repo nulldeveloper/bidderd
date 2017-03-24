@@ -64,42 +64,16 @@ func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []Agent) {
 }
 
 func errorMux(ctx *fasthttp.RequestCtx) {
-	// s := string(ctx.Request.Header.Header()[:])
-	// log.Println("string is", s)
-
-	// for name, headers := range ctx.Request.Header.Header() {
-	// 	name = strings.ToLower(name)
-	// 	for _, h := range headers {
-	// 		log.Println(name, h)
-	// 		// 	request = append(request, fmt.Sprintf(“%v: %v”, name, h))
-	// 	}
-	// }
-
 	ctx.SetStatusCode(http.StatusOK)
 	s.bidEvent()
 }
 
 func winMux(ctx *fasthttp.RequestCtx) {
-	// log.Println(ctx.PostBody())
 	ctx.SetStatusCode(fasthttp.StatusOK)
 	s.bidWin()
 }
 
 func eventMux(ctx *fasthttp.RequestCtx) {
-	// var f interface{}
-
-	// s := string(ctx.Request.Header.Header()[:])
-	// s := string(ctx.Request.Body()[:])
-	// log.Println("string is", s)
-
-	// for name, headers := range ctx.Request.Header.Header() {
-	// 	name = strings.ToLower(name)
-	// 	for _, h := range headers {
-	// 		log.Println(name, h)
-	// 		// 	request = append(request, fmt.Sprintf(“%v: %v”, name, h))
-	// 	}
-	// }
-
 	log.Println("Event!!!!!")
 	ctx.SetStatusCode(http.StatusOK)
 	s.bidEvent()
