@@ -27,8 +27,8 @@ type agents []Agent
 
 var bidderPort int
 var wg sync.WaitGroup
-var _agents agents
 
+var af = agentFactory{}
 var s = newStats()
 
 // http client to pace agents (note that it's pointer)
@@ -50,32 +50,17 @@ func setupHandlers(agents agents) {
 		}
 	}
 
-	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", bidderPort), m)
+	fasthttp.ListenAndServe(fmt.Sprintf(":%d", bidderPort), m)
 	log.Println("Started Bid Mux")
 }
 
 func cleanup(agents agents) {
 	// stopRedisSubscriber()
 	// Implement remove agent from ACS
-	shutDownAgents(agents)
+	af.shutDownAgents()
 	fmt.Println("Leaving...")
-	for i := 0; i < 3; i++ {
+	for i := 0; i < 4; i++ {
 		wg.Done()
-	}
-}
-
-func startAgents(agents agents) {
-	log.Printf("Starting Up %d Agents", len(agents))
-	for _, agent := range agents {
-		agent.RegisterAgent(client, ACSIP, ACSPort)
-		agent.StartPacer(client, BankerIP, BankerPort)
-	}
-}
-
-func shutDownAgents(agents agents) {
-	log.Println("Shutting Down Agents")
-	for _, agent := range agents {
-		agent.UnregisterAgent(client, ACSIP, ACSPort)
 	}
 }
 
@@ -95,25 +80,25 @@ func main() {
 	printPortConfigs()
 
 	// load configuration
-	af := agentFactory{}
-	_agents, err := af.LoadAgentsFromFile(*agentsConfigFile)
+	_agents, err := af.loadAgentsFromFile(*agentsConfigFile)
+	af.Agents = _agents
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	startAgents(_agents)
+	af.startAgents()
 
 	StartStatOutput()
 	setupHandlers(_agents)
 
-	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderEvent), eventMux)
+	fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderEvent), eventMux)
 	log.Println("Started event Mux")
 
-	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderError), errorMux)
+	fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderError), errorMux)
 	log.Println("Started error Mux")
 
-	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderWin), winMux)
+	fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderWin), winMux)
 	log.Println("Started Win Mux")
 
 	wg.Add(3)

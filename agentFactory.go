@@ -3,25 +3,24 @@ package main
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 )
 
 type agentFactory struct {
-	Agents []Agent
+	Agents agents
 }
 
 func (af *agentFactory) loadAgents(data []byte) ([]Agent, error) {
-	type Agents []Agent
-	var agents Agents
+	var a agents
 
-	err := json.Unmarshal(data, &agents)
+	err := json.Unmarshal(data, &a)
 	if err != nil {
 		return nil, err
 	}
-	return agents, nil
+	return a, nil
 }
 
-// LoadAgentsFromFile Parse a JSON file and return a list of Agents.
-func (af *agentFactory) LoadAgentsFromFile(filepath string) ([]Agent, error) {
+func (af *agentFactory) loadAgentsFromFile(filepath string) (agents, error) {
 	data, err := ioutil.ReadFile(filepath)
 	if err != nil {
 		return nil, err
@@ -29,7 +28,21 @@ func (af *agentFactory) LoadAgentsFromFile(filepath string) ([]Agent, error) {
 	return af.loadAgents(data)
 }
 
-// LoadAgentsFromString ...
-func (af *agentFactory) LoadAgentsFromString(agentsString string) ([]Agent, error) {
+func (af *agentFactory) loadAgentsFromString(agentsString string) (agents, error) {
 	return af.loadAgents([]byte(agentsString))
+}
+
+func (af *agentFactory) startAgents() {
+	log.Printf("Starting Up %d Agents", len(af.Agents))
+	for _, agent := range af.Agents {
+		agent.RegisterAgent(client, ACSIP, ACSPort)
+		agent.StartPacer(client, BankerIP, BankerPort)
+	}
+}
+
+func (af *agentFactory) shutDownAgents() {
+	log.Println("Shutting Down Agents")
+	for _, agent := range af.Agents {
+		agent.UnregisterAgent(client, ACSIP, ACSPort)
+	}
 }
