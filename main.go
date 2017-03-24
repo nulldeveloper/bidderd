@@ -29,6 +29,8 @@ var bidderPort int
 var wg sync.WaitGroup
 var _agents agents
 
+var s = newStats()
+
 // http client to pace agents (note that it's pointer)
 var client = &http.Client{}
 
@@ -78,7 +80,7 @@ func shutDownAgents(agents agents) {
 }
 
 func main() {
-	var agentsConfigFile = flag.String("config", "agents-smartrtb.json", "Configuration file in JSON.")
+	var agentsConfigFile = flag.String("config", "agentconfigs/agents-smartrtb.json", "Configuration file in JSON.")
 	flag.IntVar(&bidderPort, "port", BiddingPort, "Port to listen on for router")
 	flag.Parse()
 

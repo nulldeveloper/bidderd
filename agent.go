@@ -3,32 +3,18 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
-	"math/rand"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
 	openrtb "gopkg.in/bsm/openrtb.v2"
 )
 
-//OutputPerSeconds = number of seconds between stat output
-var OutputPerSeconds = 10
-
-//Wins = counter for # of wins in the last OutputPerSeconds
-var Wins = 0
-
-//Events = counter for # of events in the last OutputPerSeconds
-var Events = 0
-
-//Bids = counter for # of bids in the last OutputPerSeconds
-var Bids = 0
-
 var outputChannel = make(chan bool)
+
+var be = bidEngine{}
 
 // Creative ...
 type Creative struct {
@@ -75,14 +61,6 @@ type Agent struct {
 	registered bool      // did we register the configuration in the ACS?
 	pacer      chan bool // go routine updating balance in the banker
 	bidID      int       // unique id for response
-}
-
-// CreativesKey This is used to make a mapping between an impression and the
-// external-id of an agent to the creatives that can be sent to the
-// exchange for that impression.
-type CreativesKey struct {
-	ImpID string
-	ExtID int
 }
 
 // RegisterAgent in the ACS sending a HTTP request to the service on `acsIp`:`acsPort`
@@ -157,49 +135,18 @@ func (agent *Agent) StartPacer(
 
 // StartStatOutput is responsible for displaying the number of wins and events per timer tick
 func StartStatOutput() {
-	tickerChannel := time.NewTicker(time.Second * time.Duration(OutputPerSeconds)).C
+	tickerChannel := time.NewTicker(time.Second * time.Duration(s.outputPerSeconds)).C
 
 	go func() {
 		for {
 			select {
 			case <-tickerChannel:
-				printStats()
+				s.printStats()
 			case <-outputChannel:
 				return
 			}
 		}
 	}()
-}
-
-// BidWin ...
-func BidWin() {
-	Wins++
-}
-
-// BidEvent ...
-func BidEvent() {
-	Events++
-}
-
-// BidIncoming ...
-func (a *Agent) BidIncoming() {
-	Bids++
-}
-
-func printStats() {
-	tempWins := Wins
-	Wins = 0
-	winsPerSecond := tempWins / OutputPerSeconds
-	tempEvents := Events
-	Events = 0
-	eventsPerSecond := tempEvents / OutputPerSeconds
-	tempBids := Bids
-	Bids = 0
-	bidsPerSecond := tempBids / OutputPerSeconds
-	log.Println("***********************")
-	log.Printf("Bids: %d (%d/second)", tempBids, bidsPerSecond)
-	log.Printf("Wins: %d (%d/second)", tempWins, winsPerSecond)
-	log.Printf("Events: %d (%d/second)", tempEvents, eventsPerSecond)
 }
 
 // StopPacer Stops the go routine updating the bank balance.
@@ -212,91 +159,7 @@ func (agent *Agent) StopPacer() {
 // the only seat of the response. It picks a random creative from
 // the list of creatives from the `Agent.Config.Creative` and places it
 // in the bid.
-func (agent *Agent) DoBid(req *openrtb.BidRequest, res *openrtb.BidResponse, ids map[CreativesKey]interface{}) (*openrtb.BidResponse, bool) {
-
-	for _, imp := range req.Imp {
-		key := CreativesKey{ImpID: imp.ID, ExtID: agent.Config.ExternalID}
-		if ids[key] == nil {
-			continue
-		}
-
-		creativeList := ids[key].([]interface{})
-		// pick a random creative
-		n := rand.Intn(len(creativeList))
-
-		// Extract a usable creative ID from the JSON parse
-		crid := strconv.Itoa(int(creativeList[n].(float64)))
-
-		bidID := strconv.Itoa(agent.bidID)
-
-		rp := randomPrice{percentage: agent.Percentage, price: agent.Price}
-		price := rp.randomPrice()
-
-		ext := map[string]interface{}{"priority": 1.0, "external-id": agent.Config.ExternalID}
-		jsonExt, _ := json.Marshal(ext)
-		bid := openrtb.Bid{ID: bidID, ImpID: imp.ID, CreativeID: crid, Price: price, Ext: jsonExt}
-		agent.bidID++
-		res.SeatBid[0].Bid = append(res.SeatBid[0].Bid, bid)
-	}
-
-	res.Currency = "USD"
-	res.BidID = strconv.Itoa(agent.bidID)
-
-	return res, len(res.SeatBid[0].Bid) > 0
-}
-
-// ExternalIdsFromRequest makes a mappping with a range of type (Impression Id, External Id)
-// to a slice of "creative indexes" (See the agent configuration "creative").
-// We use this auxiliary function in `DoBid` to match the `BidRequest` to the
-// creatives of the agent and create a response.
-func ExternalIdsFromRequest(req *openrtb.BidRequest) map[CreativesKey]interface{} {
-	ids := make(map[CreativesKey]interface{})
-
-	for _, imp := range req.Imp {
-		log.Print("")
-		var extJSON map[string]interface{}
-		_ = json.Unmarshal(imp.Ext, &extJSON)
-
-		for _, extID := range extJSON["external-ids"].([]interface{}) {
-			extID = int(extID.(float64))
-			key := CreativesKey{ImpID: imp.ID, ExtID: extID.(int)}
-			creatives := (extJSON["creative-ids"].(map[string]interface{}))[strconv.Itoa(extID.(int))]
-			ids[key] = creatives.(interface{})
-		}
-	}
-	return ids
-}
-
-// EmptyResponseWithOneSeat adds a Seat to the Response.
-// Seat: A buyer entity that uses a Bidder to obtain impressions on its behalf.
-func EmptyResponseWithOneSeat(req *openrtb.BidRequest) *openrtb.BidResponse {
-	seat := openrtb.SeatBid{Bid: make([]openrtb.Bid, 0)}
-	seatbid := []openrtb.SeatBid{seat}
-	res := &openrtb.BidResponse{ID: req.ID, SeatBid: seatbid}
-	return res
-}
-
-// LoadAgent Parse a JSON file and return an Agent.
-func LoadAgent(filepath string) (Agent, error) {
-	var agent Agent
-	data, err := ioutil.ReadFile(filepath)
-	if err != nil {
-		return Agent{}, err
-	}
-	err = json.Unmarshal(data, &agent)
-	if err != nil {
-		return Agent{}, err
-	}
-	return agent, nil
-}
-
-// FindCreativeIndexFromID takes a creative ID and an AgentConfig,
-// returning a creative index usable by the RTBKit router
-func FindCreativeIndexFromID(crid int, agent AgentConfig) (string, error) {
-	for creativeIndex, creative := range agent.Creatives {
-		if creative.ID == crid {
-			return strconv.Itoa(creativeIndex), nil
-		}
-	}
-	return "", errors.New("Unable to find matching creative")
+func (agent *Agent) DoBid(req *openrtb.BidRequest) (*openrtb.BidResponse, bool) {
+	res := be.bid(*req, *agent)
+	return &res, len(res.SeatBid[0].Bid) > 0
 }
