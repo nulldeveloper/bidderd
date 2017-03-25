@@ -4,6 +4,9 @@ import:
   version: ^2.1.1
 - package: gopkg.in/redis.v5
   version: ^5.2.9
+- package: github.com/eawsy/aws-lambda-go-core
+  subpackages:
+  - '...'
 testImport:
 - package: github.com/onsi/ginkgo
   version: ^1.2.0
