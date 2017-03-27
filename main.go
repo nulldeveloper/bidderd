@@ -39,11 +39,11 @@ func printPortConfigs() {
 	log.Printf("Event port: %d", BidderEvent)
 }
 
-func setupHandlers(agents agents) {
+func setupHandlers(agent Agent) {
 	m := func(ctx *fasthttp.RequestCtx) {
 		switch string(ctx.Path()) {
 		case "/auctions":
-			fastHandleAuctions(ctx, agents)
+			fastHandleAuctions(ctx, agent)
 		default:
 			ctx.Error("not found", fasthttp.StatusNotFound)
 		}
@@ -53,7 +53,7 @@ func setupHandlers(agents agents) {
 	log.Println("Started Bid Mux")
 }
 
-func cleanup(agents agents) {
+func cleanup() {
 	rh.stopRedisSubscriber()
 	// Implement remove agent from ACS
 	af.shutDownAgents()
@@ -79,16 +79,16 @@ func main() {
 	printPortConfigs()
 
 	// load configuration
-	_agents, err := af.loadAgentsFromFile(*agentsConfigFile)
+	_agent, err := af.loadAgentsFromFile(*agentsConfigFile)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	af.setAgents(_agents)
+	af.setAgent(*_agent)
 
 	StartStatOutput()
-	setupHandlers(_agents)
+	setupHandlers(*_agent)
 
 	fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderEvent), eventMux)
 	log.Println("Started event Mux")
@@ -106,7 +106,7 @@ func main() {
 
 	go func() {
 		<-c
-		cleanup(_agents)
+		cleanup()
 		os.Exit(1)
 	}()
 

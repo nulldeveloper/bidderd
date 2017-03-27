@@ -13,7 +13,7 @@ import (
 var openRTBVersion = "2.2"
 var l = logger{}
 
-func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []Agent) {
+func fastHandleAuctions(ctx *fasthttp.RequestCtx, agent Agent) {
 	var (
 		ok    = true
 		tmpOk = true
@@ -35,13 +35,11 @@ func fastHandleAuctions(ctx *fasthttp.RequestCtx, agents []Agent) {
 	// log.Println("INFO Received bid request", req.ID)
 	var res *openrtb.BidResponse
 
-	for _, agent := range agents {
-		res, tmpOk = agent.DoBid(req)
-		ok = tmpOk || ok
+	res, tmpOk = agent.DoBid(req)
+	ok = tmpOk || ok
 
-		if tmpOk {
-			s.bidIncoming()
-		}
+	if tmpOk {
+		s.bidIncoming()
 	}
 
 	if ok {

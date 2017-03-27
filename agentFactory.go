@@ -10,7 +10,7 @@ type agentFactory struct {
 	Agent Agent
 }
 
-func (af *agentFactory) setAgents(a Agent) {
+func (af *agentFactory) setAgent(a Agent) {
 	af.shutDownAgents()
 	af.Agent = a
 	af.startAgents()
@@ -38,8 +38,20 @@ func (af *agentFactory) loadAgentsFromString(agentsString string) (*Agent, error
 	return af.loadAgent([]byte(agentsString))
 }
 
+func (af *agentFactory) updateAgentConfiguration(config string) {
+	log.Println("the message is", config)
+
+	agent, err := af.loadAgentsFromString(config)
+
+	if err != nil {
+		log.Println("Bad json configuration, sucka!!!!!!")
+	} else {
+		af.setAgent(*agent)
+	}
+}
+
 func (af *agentFactory) startAgents() {
-	log.Printf("Starting Up %d Agents", len(af.Agents))
+	log.Println("Starting up Agent")
 	af.Agent.RegisterAgent(client, ACSIP, ACSPort)
 	af.Agent.StartPacer(client, BankerIP, BankerPort)
 }
