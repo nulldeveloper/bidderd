@@ -1,8 +1,12 @@
-hash: 73b146871f89d9004b8d39dc733553875d8b27297d9cb9b5bbd38c27ddb0d81f
-updated: 2017-03-16T14:47:30.472603884-07:00
+hash: 10fec6612ea895e6378a1c5aa46db5f6c8615613e08d4ca994fa5322548e74c4
+updated: 2017-03-24T17:07:25.937174733-07:00
 imports:
+- name: github.com/eawsy/aws-lambda-go-core
+  version: e26eed6aa244a3d45aa693816a9c5faf39390fcd
+  subpackages:
+  - '...'
 - name: github.com/klauspost/compress
-  version: 14c9a76e3c95e47f8ccce949bba2c1101a8b85e6
+  version: 6c8db69c4b49dd4df1fff66996cf556176d0b9bf
   subpackages:
   - flate
   - gzip
@@ -19,6 +23,12 @@ imports:
   version: dde43bcfdf56ce6ddf3fb38714f09b18dbeee712
 - name: gopkg.in/redis.v5
   version: a16aeec10ff407b1e7be6dd35797ccf5426ef0f0
+  subpackages:
+  - internal
+  - internal/consistenthash
+  - internal/hashtag
+  - internal/pool
+  - internal/proto
 testImports:
 - name: github.com/onsi/ginkgo
   version: 462326b1628e124b23f42e87a8f2750e3c4e2d24
