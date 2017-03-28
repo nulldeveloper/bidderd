@@ -22,9 +22,13 @@ func fastHandleAuctions(ctx *fasthttp.RequestCtx, agent Agent) {
 	// enc := json.NewEncoder(w)
 	// body, _ := ioutil.ReadAll(r.Body)
 	// fmt.Println(string(body))
+	var body = ctx.PostBody()
+
 	var req *openrtb.BidRequest
-	err := json.Unmarshal(ctx.PostBody(), &req)
+	err := json.Unmarshal(body, &req)
 	// req, err := openrtb.ParseRequest(r.Body)
+
+	// log.Println("extension is", string(req.Ext))
 
 	if err != nil {
 		log.Println("ERROR", err.Error())

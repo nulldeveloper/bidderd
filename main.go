@@ -49,16 +49,16 @@ func setupHandlers(agent Agent) {
 		}
 	}
 
-	fasthttp.ListenAndServe(fmt.Sprintf(":%d", bidderPort), m)
+	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", bidderPort), m)
 	log.Println("Started Bid Mux")
 }
 
 func cleanup() {
-	rh.stopRedisSubscriber()
-	// Implement remove agent from ACS
-	af.shutDownAgents()
 	fmt.Println("Leaving...")
-	for i := 0; i < 4; i++ {
+	// Implement remove agent from ACS
+	// rh.stopRedisSubscriber()
+	af.shutDownAgents()
+	for i := 0; i < 3; i++ {
 		wg.Done()
 	}
 }
@@ -72,9 +72,9 @@ func main() {
 		log.Fatal("You should provide a configuration file.")
 	}
 
-	rh.subscribe()
-	go rh.startRedisSubscriber()
-	wg.Add(1)
+	// rh.subscribe()
+	// go rh.startRedisSubscriber()
+	// wg.Add(1)
 
 	printPortConfigs()
 
@@ -85,30 +85,29 @@ func main() {
 		log.Fatal(err)
 	}
 
-	af.setAgent(*_agent)
-
-	StartStatOutput()
-	setupHandlers(*_agent)
-
-	fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderEvent), eventMux)
-	log.Println("Started event Mux")
-
-	fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderError), errorMux)
-	log.Println("Started error Mux")
-
-	fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderWin), winMux)
-	log.Println("Started Win Mux")
-
-	wg.Add(3)
-
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, os.Kill)
-
 	go func() {
 		<-c
 		cleanup()
 		os.Exit(1)
 	}()
+
+	af.setAgent(*_agent)
+
+	StartStatOutput()
+	setupHandlers(*_agent)
+
+	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderEvent), eventMux)
+	log.Println("Started event Mux")
+
+	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderError), errorMux)
+	log.Println("Started error Mux")
+
+	go fasthttp.ListenAndServe(fmt.Sprintf(":%d", BidderWin), winMux)
+	log.Println("Started Win Mux")
+
+	wg.Add(3)
 
 	wg.Wait()
 }
