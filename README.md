@@ -26,8 +26,8 @@ agents.
 
 Before installing you should setup your Go environment.
 
-* `go get github.com/machinalis/bidderd`
-* `go install github.com/machinalis/bidderd`
+* `go get github.com/nulldeveloper/bidderd`
+* `go install github.com/nulldeveloper/bidderd`
 
 ### Usage
 
