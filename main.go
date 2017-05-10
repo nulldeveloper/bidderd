@@ -64,12 +64,12 @@ func cleanup() {
 }
 
 func main() {
-	var agentsConfigFile = flag.String("config", "agentconfigs/agents-smartrtb.json", "Configuration file in JSON.")
+	var agentsConfigFile = flag.String("config", "", "Configuration file in JSON."
 	flag.IntVar(&bidderPort, "port", BiddingPort, "Port to listen on for router")
 	flag.Parse()
 
 	if *agentsConfigFile == "" {
-		log.Fatal("You should provide a configuration file.")
+		log.Fatal("You should provide a configuration file. Usage: bidderd --config filename.json ")
 	}
 
 	// rh.subscribe()
